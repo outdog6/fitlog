@@ -4,8 +4,8 @@ import { auth } from "@/lib/auth";
 import { StatsCards } from "@/components/stats-cards";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Play, Trash2 } from "lucide-react";
-import { deleteWorkoutSession } from "./actions";
+import { Play } from "lucide-react";
+import { DeleteConfirmButton } from "@/components/delete-confirm-button";
 
 function getMonday(): Date {
   const now = new Date();
@@ -179,13 +179,10 @@ export default async function DashboardPage() {
                       </CardContent>
                     </Card>
                   </Link>
-                  <form action={deleteWorkoutSession.bind(null, session.id)}>
-                    <Button type="submit" variant="ghost" size="icon"
-                      className="text-muted-foreground hover:text-destructive shrink-0"
-                      title="删除此记录">
-                      <Trash2 className="size-4" />
-                    </Button>
-                  </form>
+                  <DeleteConfirmButton
+                    sessionId={session.id}
+                    sessionName={session.plan?.name ?? "自由训练"}
+                  />
                 </div>
               );
             })}
