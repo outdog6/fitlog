@@ -13,6 +13,8 @@ interface PlanExercise {
   id: string;
   exerciseId: string;
   exercise: { name: string };
+  lastWeight?: number;
+  lastReps?: string;
 }
 
 interface RecordedSet {
@@ -157,6 +159,8 @@ function WorkoutContent() {
               <SetLogger
                 exerciseName={pe.exercise.name}
                 exerciseId={pe.exerciseId}
+                initialWeight={pe.lastWeight}
+                initialReps={pe.lastReps}
                 onSetRecorded={handleSetRecorded}
               />
             </CardContent>

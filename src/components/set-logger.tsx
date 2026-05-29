@@ -17,6 +17,8 @@ interface SetRow {
 interface SetLoggerProps {
   exerciseName: string;
   exerciseId: string;
+  initialWeight?: number;
+  initialReps?: string;
   onSetRecorded: (
     exerciseId: string,
     weight: number,
@@ -28,10 +30,14 @@ interface SetLoggerProps {
 export function SetLogger({
   exerciseName,
   exerciseId,
+  initialWeight,
+  initialReps,
   onSetRecorded,
 }: SetLoggerProps) {
+  const initWeight = initialWeight && initialWeight > 0 ? String(initialWeight) : "";
+  const initReps = initialReps || "";
   const [sets, setSets] = useState<SetRow[]>([
-    { setNumber: 1, weight: "", reps: "", completed: false },
+    { setNumber: 1, weight: initWeight, reps: initReps, completed: false },
   ]);
 
   function handleCheck(index: number) {

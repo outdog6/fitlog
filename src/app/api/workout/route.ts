@@ -23,13 +23,45 @@ export async function GET(request: Request) {
       where: { planId },
       include: {
         exercise: {
-          select: { name: true },
+          select: { id: true, name: true },
         },
       },
       orderBy: [{ dayOfWeek: "asc" }, { order: "asc" }],
     });
 
-    return NextResponse.json(planExercises);
+    const exerciseIds = planExercises.map((pe) => pe.exercise.id);
+
+    const recentSets = exerciseIds.length > 0
+      ? await prisma.workoutSet.findMany({
+          where: {
+            exerciseId: { in: exerciseIds },
+            session: { userId: session.user.id },
+          },
+          select: {
+            exerciseId: true,
+            weight: true,
+            reps: true,
+            session: { select: { date: true } },
+          },
+          orderBy: { session: { date: "desc" } },
+          take: exerciseIds.length * 10,
+        })
+      : [];
+
+    const lastByExercise = new Map<string, { weight: number; reps: number }>();
+    for (const s of recentSets) {
+      if (!lastByExercise.has(s.exerciseId)) {
+        lastByExercise.set(s.exerciseId, { weight: s.weight, reps: s.reps });
+      }
+    }
+
+    const result = planExercises.map((pe) => ({
+      ...pe,
+      lastWeight: lastByExercise.get(pe.exercise.id)?.weight ?? 0,
+      lastReps: lastByExercise.get(pe.exercise.id)?.reps ?? pe.targetReps ?? "10",
+    }));
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Error fetching plan exercises:", error);
     return NextResponse.json(
