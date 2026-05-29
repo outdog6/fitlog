@@ -138,9 +138,27 @@ async function main() {
     create: { id: "system", email: "system@fitlog.local", name: "System", passwordHash: "" },
   });
 
+  const englishSlugs: Record<string, string> = {
+    "深蹲": "barbell-squat",
+    "卧推": "bench-press",
+    "硬拉": "deadlift",
+    "实力举": "overhead-press",
+    "杠铃划船": "barbell-row",
+    "引体向上": "pull-up",
+    "哑铃弯举": "dumbbell-curl",
+    "绳索下压": "tricep-pushdown",
+    "腿举": "leg-press",
+    "罗马尼亚硬拉": "romanian-deadlift",
+    "侧平举": "lateral-raise",
+    "平板支撑": "plank",
+    "面拉": "face-pull",
+    "哑铃箭步蹲": "dumbbell-lunges",
+    "高位下拉": "lat-pulldown",
+  };
+
   const exerciseMap: Record<string, string> = {};
   for (const ex of exerciseData) {
-    const slug = ex.name.replace(/\s+/g, "-").toLowerCase();
+    const slug = englishSlugs[ex.name] || ex.name.replace(/\s+/g, "-").toLowerCase();
     const exercise = await prisma.exercise.upsert({
       where: { id: slug },
       update: {},
@@ -195,7 +213,12 @@ async function main() {
 
   console.log("Seeding plan templates...");
   for (const tmpl of templates) {
-    const planId = `template-${tmpl.name.replace(/\s+/g, "-").toLowerCase()}`;
+    const slugMap: Record<string, string> = {
+      "推拉腿分化": "template-ppl",
+      "上下肢分化": "template-upper-lower",
+      "全身训练3次/周": "template-fullbody-3x",
+    };
+    const planId = slugMap[tmpl.name] || `template-${tmpl.name.replace(/[\s/]+/g, "-").replace(/[^a-zA-Z0-9-]/g, "").toLowerCase()}`;
     const plan = await prisma.trainingPlan.upsert({
       where: { id: planId },
       update: { name: tmpl.name, description: tmpl.description },

@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import type { Muscle, Equipment } from "@/generated/prisma/client";
+
+const validMuscles = ["chest", "back", "legs", "shoulders", "arms", "core"];
+const validEquipment = ["barbell", "dumbbell", "cable", "bodyweight", "machine"];
 
 export async function GET() {
   try {
@@ -19,7 +21,7 @@ export async function GET() {
   } catch (error) {
     console.error("Error fetching exercises:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Failed to fetch exercises" },
       { status: 500 }
     );
   }
@@ -42,31 +44,14 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate muscle enum
-    const validMuscles: Muscle[] = [
-      "chest",
-      "back",
-      "legs",
-      "shoulders",
-      "arms",
-      "core",
-    ];
-    if (!validMuscles.includes(primaryMuscle as Muscle)) {
+    if (!validMuscles.includes(primaryMuscle)) {
       return NextResponse.json(
         { error: "Invalid muscle group" },
         { status: 400 }
       );
     }
 
-    // Validate equipment enum
-    const validEquipment: Equipment[] = [
-      "barbell",
-      "dumbbell",
-      "cable",
-      "bodyweight",
-      "machine",
-    ];
-    if (!validEquipment.includes(equipment as Equipment)) {
+    if (!validEquipment.includes(equipment)) {
       return NextResponse.json(
         { error: "Invalid equipment type" },
         { status: 400 }
@@ -76,8 +61,9 @@ export async function POST(request: Request) {
     const exercise = await prisma.exercise.create({
       data: {
         name,
-        primaryMuscle: primaryMuscle as Muscle,
-        equipment: equipment as Equipment,
+        primaryMuscle,
+        equipment,
+        secondaryMuscles: "[]",
         description: description || "",
         instructions: instructions || "",
         isPreset: false,
@@ -89,7 +75,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating exercise:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Failed to create exercise" },
       { status: 500 }
     );
   }

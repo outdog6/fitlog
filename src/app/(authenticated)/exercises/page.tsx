@@ -5,8 +5,6 @@ import { ExerciseCard } from "@/components/exercise-card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { auth } from "@/lib/auth";
-import type { Muscle, Equipment } from "@/generated/prisma/client";
-
 type SearchParams = Promise<{ muscle?: string; equipment?: string }>;
 
 export default async function ExercisesPage({
@@ -19,7 +17,7 @@ export default async function ExercisesPage({
   const muscleFilter = params.muscle;
   const equipmentFilter = params.equipment;
 
-  const validMuscles: Muscle[] = [
+  const validMuscles: string[] = [
     "chest",
     "back",
     "legs",
@@ -27,7 +25,7 @@ export default async function ExercisesPage({
     "arms",
     "core",
   ];
-  const validEquipment: Equipment[] = [
+  const validEquipment: string[] = [
     "barbell",
     "dumbbell",
     "cable",
@@ -48,7 +46,7 @@ export default async function ExercisesPage({
   if (
     muscleFilter &&
     muscleFilter !== "all" &&
-    validMuscles.includes(muscleFilter as Muscle)
+    validMuscles.includes(muscleFilter)
   ) {
     where.primaryMuscle = muscleFilter;
   }
@@ -56,7 +54,7 @@ export default async function ExercisesPage({
   if (
     equipmentFilter &&
     equipmentFilter !== "all" &&
-    validEquipment.includes(equipmentFilter as Equipment)
+    validEquipment.includes(equipmentFilter)
   ) {
     where.equipment = equipmentFilter;
   }
