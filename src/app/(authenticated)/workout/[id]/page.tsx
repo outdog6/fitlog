@@ -75,7 +75,7 @@ export default async function WorkoutSessionDetailPage({
     0
   );
 
-  const dateStr = workoutSession.date.toLocaleDateString("en-US", {
+  const dateStr = workoutSession.date.toLocaleDateString("zh-CN", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -93,7 +93,7 @@ export default async function WorkoutSessionDetailPage({
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-foreground">
-            {workoutSession.plan?.name ?? "Free Workout"}
+            {workoutSession.plan?.name ?? "自由训练"}
           </h1>
           <p className="text-muted-foreground">{dateStr}</p>
         </div>
@@ -103,13 +103,13 @@ export default async function WorkoutSessionDetailPage({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
           <CardContent className="pt-4">
-            <p className="text-sm text-muted-foreground">Total Sets</p>
+            <p className="text-sm text-muted-foreground">总组数</p>
             <p className="text-2xl font-bold text-foreground">{totalSets}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-sm text-muted-foreground">Total Volume</p>
+            <p className="text-sm text-muted-foreground">总训练量</p>
             <p className="text-2xl font-bold text-foreground">
               {totalVolume.toLocaleString()} kg
             </p>
@@ -117,10 +117,10 @@ export default async function WorkoutSessionDetailPage({
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-sm text-muted-foreground">Duration</p>
+            <p className="text-sm text-muted-foreground">训练时长</p>
             <p className="text-2xl font-bold text-foreground">
               {workoutSession.duration != null
-                ? `${workoutSession.duration} min`
+                ? `${workoutSession.duration} 分钟`
                 : "—"}
             </p>
           </CardContent>
@@ -137,10 +137,10 @@ export default async function WorkoutSessionDetailPage({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Set #</TableHead>
-                  <TableHead>Weight</TableHead>
-                  <TableHead>Reps</TableHead>
-                  <TableHead>Volume</TableHead>
+                  <TableHead>组号</TableHead>
+                  <TableHead>重量</TableHead>
+                  <TableHead>次数</TableHead>
+                  <TableHead>训练量</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -162,7 +162,7 @@ export default async function WorkoutSessionDetailPage({
       {workoutSession.notes && (
         <Card>
           <CardHeader>
-            <CardTitle>Notes</CardTitle>
+            <CardTitle>备注</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground whitespace-pre-wrap">

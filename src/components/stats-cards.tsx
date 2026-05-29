@@ -23,7 +23,7 @@ export function StatsCards({
         <CardContent className="pt-4">
           <div className="flex items-center gap-2">
             <CalendarCheck className="size-4 text-emerald-500" />
-            <p className="text-sm text-muted-foreground">This Week</p>
+            <p className="text-sm text-muted-foreground">本周</p>
           </div>
           <p className="text-2xl font-bold text-foreground mt-1">
             {weekCompleted}/{weekGoal}
@@ -36,7 +36,7 @@ export function StatsCards({
         <CardContent className="pt-4">
           <div className="flex items-center gap-2">
             <TrendingUp className="size-4 text-cyan-500" />
-            <p className="text-sm text-muted-foreground">Total Sessions</p>
+            <p className="text-sm text-muted-foreground">总训练次数</p>
           </div>
           <p className="text-2xl font-bold text-foreground mt-1">
             {totalSessions}
@@ -49,10 +49,10 @@ export function StatsCards({
         <CardContent className="pt-4">
           <div className="flex items-center gap-2">
             <Target className="size-4 text-orange-500" />
-            <p className="text-sm text-muted-foreground">Current Plan</p>
+            <p className="text-sm text-muted-foreground">当前计划</p>
           </div>
           <p className="text-2xl font-bold text-foreground mt-1">
-            {currentPlan ?? "No plan"}
+            {currentPlan ?? "无计划"}
           </p>
         </CardContent>
       </Card>
@@ -62,10 +62,10 @@ export function StatsCards({
         <CardContent className="pt-4">
           <div className="flex items-center gap-2">
             <Dumbbell className="size-4 text-cyan-500" />
-            <p className="text-sm text-muted-foreground">Today</p>
+            <p className="text-sm text-muted-foreground">今天</p>
           </div>
           <p className="text-2xl font-bold text-foreground mt-1">
-            {todayName ?? "Rest"}
+            {todayName ?? "休息"}
           </p>
         </CardContent>
       </Card>

@@ -25,6 +25,23 @@ const equipmentColors: Record<string, string> = {
   machine: "bg-slate-500/20 text-slate-400",
 };
 
+const muscleLabels: Record<string, string> = {
+  chest: "胸部",
+  back: "背部",
+  legs: "腿部",
+  shoulders: "肩部",
+  arms: "手臂",
+  core: "核心",
+};
+
+const equipmentLabels: Record<string, string> = {
+  barbell: "杠铃",
+  dumbbell: "哑铃",
+  cable: "绳索",
+  bodyweight: "自重",
+  machine: "器械",
+};
+
 export function ExerciseCard({
   exercise,
   isOwner,
@@ -45,18 +62,18 @@ export function ExerciseCard({
                 muscleColors[exercise.primaryMuscle] || "bg-muted text-muted-foreground"
               }`}
             >
-              {exercise.primaryMuscle}
+              {muscleLabels[exercise.primaryMuscle] || exercise.primaryMuscle}
             </span>
             <span
               className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
                 equipmentColors[exercise.equipment] || "bg-muted text-muted-foreground"
               }`}
             >
-              {exercise.equipment}
+              {equipmentLabels[exercise.equipment] || exercise.equipment}
             </span>
             {isOwner && (
               <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-accent/20 text-accent">
-                Custom
+                自定义
               </span>
             )}
           </div>

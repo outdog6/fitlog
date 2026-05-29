@@ -25,13 +25,13 @@ import { deletePlanExercise } from "./actions";
 type PageParams = Promise<{ id: string }>;
 
 const dayNames: Record<number, string> = {
-  1: "Monday",
-  2: "Tuesday",
-  3: "Wednesday",
-  4: "Thursday",
-  5: "Friday",
-  6: "Saturday",
-  7: "Sunday",
+  1: "周一",
+  2: "周二",
+  3: "周三",
+  4: "周四",
+  5: "周五",
+  6: "周六",
+  7: "周日",
 };
 
 export default async function PlanDetailPage({
@@ -97,7 +97,7 @@ export default async function PlanDetailPage({
           )}
           {isTemplate && (
             <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-accent/20 text-accent mt-1">
-              Template
+              模板
             </span>
           )}
         </div>
@@ -106,7 +106,7 @@ export default async function PlanDetailPage({
       {weeks.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            No exercises have been added to this plan yet.
+            该计划尚未添加动作。
           </CardContent>
         </Card>
       ) : (
@@ -114,7 +114,7 @@ export default async function PlanDetailPage({
           <TabsList>
             {weeks.map(([weekNumber]) => (
               <TabsTrigger key={weekNumber} value={`week-${weekNumber}`}>
-                Week {weekNumber}
+                第{weekNumber}周
               </TabsTrigger>
             ))}
           </TabsList>
@@ -128,11 +128,10 @@ export default async function PlanDetailPage({
                     <Card key={dayOfWeek}>
                       <CardHeader>
                         <CardTitle className="text-base">
-                          {dayNames[dayOfWeek] ?? `Day ${dayOfWeek}`}
+                          {dayNames[dayOfWeek] ?? `第${dayOfWeek}天`}
                         </CardTitle>
                         <CardDescription>
-                          {exercises.length}{" "}
-                          {exercises.length === 1 ? "exercise" : "exercises"}
+                          {exercises.length} 个动作
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
@@ -140,8 +139,8 @@ export default async function PlanDetailPage({
                           <TableHeader>
                             <TableRow>
                               <TableHead className="w-12">#</TableHead>
-                              <TableHead>Exercise</TableHead>
-                              <TableHead>Target</TableHead>
+                              <TableHead>动作</TableHead>
+                              <TableHead>目标</TableHead>
                               {isOwner && (
                                 <TableHead className="w-12" />
                               )}

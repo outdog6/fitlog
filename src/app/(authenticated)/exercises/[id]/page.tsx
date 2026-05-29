@@ -22,6 +22,23 @@ const equipmentColors: Record<string, string> = {
   machine: "bg-slate-500/20 text-slate-400",
 };
 
+const muscleLabels: Record<string, string> = {
+  chest: "胸部",
+  back: "背部",
+  legs: "腿部",
+  shoulders: "肩部",
+  arms: "手臂",
+  core: "核心",
+};
+
+const equipmentLabels: Record<string, string> = {
+  barbell: "杠铃",
+  dumbbell: "哑铃",
+  cable: "绳索",
+  bodyweight: "自重",
+  machine: "器械",
+};
+
 type Params = Promise<{ id: string }>;
 
 export default async function ExerciseDetailPage({
@@ -44,7 +61,7 @@ export default async function ExerciseDetailPage({
       <Link href="/exercises">
         <Button variant="ghost" className="gap-2">
           <ArrowLeft className="size-4" />
-          Back to Exercises
+          返回动作库
         </Button>
       </Link>
 
@@ -58,14 +75,14 @@ export default async function ExerciseDetailPage({
               muscleColors[exercise.primaryMuscle] || "bg-muted text-muted-foreground"
             }`}
           >
-            {exercise.primaryMuscle}
+            {muscleLabels[exercise.primaryMuscle] || exercise.primaryMuscle}
           </span>
           <span
             className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
               equipmentColors[exercise.equipment] || "bg-muted text-muted-foreground"
             }`}
           >
-            {exercise.equipment}
+            {equipmentLabels[exercise.equipment] || exercise.equipment}
           </span>
         </div>
       </div>
@@ -81,7 +98,7 @@ export default async function ExerciseDetailPage({
       {exercise.description && (
         <Card>
           <CardHeader>
-            <CardTitle>Description</CardTitle>
+            <CardTitle>描述</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">{exercise.description}</p>
@@ -92,7 +109,7 @@ export default async function ExerciseDetailPage({
       {exercise.instructions && (
         <Card>
           <CardHeader>
-            <CardTitle>Instructions</CardTitle>
+            <CardTitle>动作说明</CardTitle>
           </CardHeader>
           <CardContent>
             <pre className="text-muted-foreground whitespace-pre-wrap font-sans">

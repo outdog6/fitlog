@@ -72,14 +72,14 @@ export default function NewPlanPage() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Failed to create plan");
+        throw new Error(data.error || "创建计划失败");
       }
 
       const plan = await res.json();
       router.push(`/plans/${plan.id}`);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : "出了点问题");
     } finally {
       setLoading(false);
     }
@@ -94,46 +94,46 @@ export default function NewPlanPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">New Plan</h1>
+          <h1 className="text-2xl font-bold text-foreground">新建计划</h1>
           <p className="text-muted-foreground">
             {templateId
-              ? "Create a plan from a template"
-              : "Create a new training plan"}
+              ? "基于模板创建计划"
+              : "创建新的训练计划"}
           </p>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Plan Details</CardTitle>
+          <CardTitle>计划详情</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {fetchingTemplate && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="size-4 animate-spin" />
-                Loading template...
+                加载模板中...
               </div>
             )}
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">计划名称</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. My Push Pull Legs"
+                placeholder="例如：推拉腿训练"
                 required
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">描述</Label>
               <Input
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="e.g. A 6-day split for hypertrophy"
+                placeholder="例如：增肌六分化训练"
               />
             </div>
 
@@ -144,12 +144,12 @@ export default function NewPlanPage() {
             <div className="flex gap-2 justify-end">
               <Link href="/plans">
                 <Button type="button" variant="outline">
-                  Cancel
+                  取消
                 </Button>
               </Link>
               <Button type="submit" disabled={loading}>
                 {loading && <Loader2 className="size-4 animate-spin" />}
-                Create Plan
+                创建计划
               </Button>
             </div>
           </form>

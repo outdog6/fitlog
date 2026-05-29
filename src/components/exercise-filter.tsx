@@ -10,22 +10,22 @@ import {
 } from "@/components/ui/select";
 
 const muscles = [
-  { value: "all", label: "All Muscles" },
-  { value: "chest", label: "Chest" },
-  { value: "back", label: "Back" },
-  { value: "legs", label: "Legs" },
-  { value: "shoulders", label: "Shoulders" },
-  { value: "arms", label: "Arms" },
-  { value: "core", label: "Core" },
+  { value: "all", label: "全部肌群" },
+  { value: "chest", label: "胸部" },
+  { value: "back", label: "背部" },
+  { value: "legs", label: "腿部" },
+  { value: "shoulders", label: "肩部" },
+  { value: "arms", label: "手臂" },
+  { value: "core", label: "核心" },
 ];
 
 const equipment = [
-  { value: "all", label: "All Equipment" },
-  { value: "barbell", label: "Barbell" },
-  { value: "dumbbell", label: "Dumbbell" },
-  { value: "cable", label: "Cable" },
-  { value: "bodyweight", label: "Bodyweight" },
-  { value: "machine", label: "Machine" },
+  { value: "all", label: "全部器械" },
+  { value: "barbell", label: "杠铃" },
+  { value: "dumbbell", label: "哑铃" },
+  { value: "cable", label: "绳索" },
+  { value: "bodyweight", label: "自重" },
+  { value: "machine", label: "器械" },
 ];
 
 export function ExerciseFilter() {
@@ -48,7 +48,7 @@ export function ExerciseFilter() {
   return (
     <div className="flex gap-4">
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm text-muted-foreground">Muscle</label>
+        <label className="text-sm text-muted-foreground">肌群</label>
         <Select
           value={currentMuscle}
           onValueChange={(value) => updateFilter("muscle", value ?? "all")}
@@ -66,7 +66,7 @@ export function ExerciseFilter() {
         </Select>
       </div>
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm text-muted-foreground">Equipment</label>
+        <label className="text-sm text-muted-foreground">器械</label>
         <Select
           value={currentEquipment}
           onValueChange={(value) => updateFilter("equipment", value ?? "all")}

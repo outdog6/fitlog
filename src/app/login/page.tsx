@@ -34,7 +34,7 @@ export default function LoginPage() {
         const data = await res.json();
 
         if (!res.ok) {
-          setError(data.error || "Registration failed");
+          setError(data.error || "注册失败");
           setLoading(false);
           return;
         }
@@ -47,13 +47,13 @@ export default function LoginPage() {
         });
 
         if (result?.error) {
-          setError("Account created but sign in failed. Please try logging in.");
+          setError("账户已创建但登录失败，请重试");
         } else {
           router.push("/dashboard");
           router.refresh();
         }
       } catch {
-        setError("Something went wrong. Please try again.");
+        setError("出了点问题，请重试");
       }
     } else {
       try {
@@ -64,13 +64,13 @@ export default function LoginPage() {
         });
 
         if (result?.error) {
-          setError("Invalid email or password");
+          setError("邮箱或密码错误");
         } else {
           router.push("/dashboard");
           router.refresh();
         }
       } catch {
-        setError("Something went wrong. Please try again.");
+        setError("出了点问题，请重试");
       }
     }
 
@@ -82,12 +82,12 @@ export default function LoginPage() {
       <Card className="w-full max-w-md border-zinc-800 bg-zinc-900 text-zinc-100">
         <CardHeader>
           <CardTitle className="text-xl font-semibold">
-            {isRegister ? "Create Account" : "Welcome Back"}
+            {isRegister ? "创建账户" : "欢迎回来"}
           </CardTitle>
           <CardDescription className="text-zinc-400">
             {isRegister
-              ? "Enter your details to create your account"
-              : "Enter your credentials to access your account"}
+              ? "输入信息创建账户"
+              : "输入信息登录账户"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -95,12 +95,12 @@ export default function LoginPage() {
             {isRegister && (
               <div className="flex flex-col gap-2">
                 <Label htmlFor="name" className="text-zinc-300">
-                  Name
+                  姓名
                 </Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Your name"
+                  placeholder="你的姓名"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -113,7 +113,7 @@ export default function LoginPage() {
             )}
             <div className="flex flex-col gap-2">
               <Label htmlFor="email" className="text-zinc-300">
-                Email
+                邮箱
               </Label>
               <Input
                 id="email"
@@ -130,12 +130,12 @@ export default function LoginPage() {
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="password" className="text-zinc-300">
-                Password
+                密码
               </Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="输入密码"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -157,17 +157,17 @@ export default function LoginPage() {
               className="mt-2 w-full"
             >
               {loading
-                ? "Loading..."
+                ? "加载中..."
                 : isRegister
-                  ? "Create Account"
-                  : "Sign In"}
+                  ? "创建账户"
+                  : "登录"}
             </Button>
           </form>
 
           <div className="mt-4 text-center text-sm text-zinc-400">
             {isRegister ? (
               <>
-                Already have an account?{" "}
+                已有账户？{" "}
                 <button
                   type="button"
                   onClick={() => {
@@ -176,12 +176,12 @@ export default function LoginPage() {
                   }}
                   className="font-medium text-zinc-200 hover:text-white underline underline-offset-4"
                 >
-                  Sign in
+                  登录
                 </button>
               </>
             ) : (
               <>
-                Don&apos;t have an account?{" "}
+                还没有账户？{" "}
                 <button
                   type="button"
                   onClick={() => {
@@ -190,7 +190,7 @@ export default function LoginPage() {
                   }}
                   className="font-medium text-zinc-200 hover:text-white underline underline-offset-4"
                 >
-                  Create one
+                  创建一个
                 </button>
               </>
             )}

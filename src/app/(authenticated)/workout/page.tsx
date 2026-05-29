@@ -45,13 +45,13 @@ function WorkoutContent() {
         const res = await fetch(`/api/workout?planId=${encodeURIComponent(planId!)}`);
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.error || "Failed to fetch plan exercises");
+          throw new Error(data.error || "获取计划动作失败");
         }
         const data: PlanExercise[] = await res.json();
         setExercises(data);
       } catch (err) {
         setFetchError(
-          err instanceof Error ? err.message : "Something went wrong"
+          err instanceof Error ? err.message : "出了点问题"
         );
       } finally {
         setLoading(false);
@@ -89,14 +89,14 @@ function WorkoutContent() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Failed to save workout");
+        throw new Error(data.error || "保存训练失败");
       }
 
       const session = await res.json();
       router.push(`/workout/${session.id}`);
     } catch (err) {
       setFetchError(
-        err instanceof Error ? err.message : "Something went wrong"
+        err instanceof Error ? err.message : "出了点问题"
       );
     } finally {
       setSubmitting(false);
@@ -107,15 +107,15 @@ function WorkoutContent() {
   if (!planId) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-bold text-foreground">Start Workout</h1>
+        <h1 className="text-2xl font-bold text-foreground">开始训练</h1>
         <Card>
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">
-              Select a plan from the{" "}
+              从{" "}
               <Link href="/plans" className="text-primary underline">
-                Plans page
+                训练计划
               </Link>{" "}
-              to start a guided workout.
+              页面选择计划开始指导训练。
             </p>
           </CardContent>
         </Card>
@@ -128,7 +128,7 @@ function WorkoutContent() {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-4">
         <Loader2 className="size-8 animate-spin text-muted-foreground" />
-        <p className="text-muted-foreground">Loading workout...</p>
+        <p className="text-muted-foreground">加载训练中...</p>
       </div>
     );
   }
@@ -136,8 +136,8 @@ function WorkoutContent() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Active Workout</h1>
-        <p className="text-muted-foreground">Record your sets as you go</p>
+        <h1 className="text-2xl font-bold text-foreground">当前训练</h1>
+        <p className="text-muted-foreground">记录每一组训练</p>
       </div>
 
       {fetchError && (
@@ -147,7 +147,7 @@ function WorkoutContent() {
       {exercises.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            This plan has no exercises assigned yet.
+            该计划尚未分配动作。
           </CardContent>
         </Card>
       ) : (
@@ -173,11 +173,11 @@ function WorkoutContent() {
               htmlFor="workout-notes"
               className="text-sm font-medium leading-none"
             >
-              Notes
+              备注
             </label>
             <textarea
               id="workout-notes"
-              placeholder="How did it feel? Any notes for this session..."
+              placeholder="感受如何？记录本次训练..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
@@ -191,8 +191,8 @@ function WorkoutContent() {
               disabled={recordedSets.length === 0 || submitting}
             >
               {submitting && <Loader2 className="size-4 animate-spin" />}
-              Finish Workout
-              {recordedSets.length > 0 && ` (${recordedSets.length} sets)`}
+              完成训练
+              {recordedSets.length > 0 && ` (${recordedSets.length} 组)`}
             </Button>
           </div>
         </>
@@ -205,7 +205,7 @@ function WorkoutLoading() {
   return (
     <div className="flex flex-col items-center justify-center py-16 gap-4">
       <Loader2 className="size-8 animate-spin text-muted-foreground" />
-      <p className="text-muted-foreground">Loading...</p>
+      <p className="text-muted-foreground">加载中...</p>
     </div>
   );
 }

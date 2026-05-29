@@ -20,7 +20,7 @@ export function PlanCard({ id, name, description, exerciseCount }: PlanCardProps
         </CardHeader>
         <CardContent>
           <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-muted text-muted-foreground">
-            {exerciseCount} {exerciseCount === 1 ? "exercise" : "exercises"}
+            {exerciseCount} 个动作
           </span>
         </CardContent>
       </Card>

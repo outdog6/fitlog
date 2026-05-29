@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     // Validate required fields
     if (!email || !name || !password) {
       return NextResponse.json(
-        { error: "Missing required fields: email, name, password" },
+        { error: "缺少必填字段：邮箱、姓名、密码" },
         { status: 400 }
       );
     }
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { error: "Invalid email format" },
+        { error: "邮箱格式无效" },
         { status: 400 }
       );
     }
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     // Validate password length (minimum 6 characters)
     if (password.length < 6) {
       return NextResponse.json(
-        { error: "Password must be at least 6 characters" },
+        { error: "密码至少需要6个字符" },
         { status: 400 }
       );
     }
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     // Validate name length (minimum 2 characters)
     if (name.length < 2) {
       return NextResponse.json(
-        { error: "Name must be at least 2 characters" },
+        { error: "姓名至少需要2个字符" },
         { status: 400 }
       );
     }
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "A user with this email already exists" },
+        { error: "该邮箱已被注册" },
         { status: 409 }
       );
     }
@@ -77,13 +77,13 @@ export async function POST(request: Request) {
   } catch (error: unknown) {
     if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
       return NextResponse.json(
-        { error: "A user with this email already exists" },
+        { error: "该邮箱已被注册" },
         { status: 409 }
       );
     }
     console.error("Registration error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "服务器内部错误" },
       { status: 500 }
     );
   }

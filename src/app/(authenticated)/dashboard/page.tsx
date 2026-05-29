@@ -22,8 +22,8 @@ export default async function DashboardPage() {
   if (!userId) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground">Sign in to view your dashboard.</p>
+        <h1 className="text-2xl font-bold text-foreground">仪表盘</h1>
+        <p className="text-muted-foreground">请登录后查看仪表盘。</p>
       </div>
     );
   }
@@ -98,21 +98,21 @@ export default async function DashboardPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground">Your fitness overview</p>
+          <h1 className="text-2xl font-bold text-foreground">仪表盘</h1>
+          <p className="text-muted-foreground">你的训练概览</p>
         </div>
         {latestPlan ? (
           <Link href={`/workout?plan=${latestPlan.id}`}>
             <Button>
               <Play className="size-4" />
-              Start Workout
+              开始训练
             </Button>
           </Link>
         ) : (
           <Link href="/plans">
             <Button>
               <Play className="size-4" />
-              Create a Plan
+              创建计划
             </Button>
           </Link>
         )}
@@ -129,22 +129,22 @@ export default async function DashboardPage() {
       {/* Recent Workouts */}
       <section>
         <h2 className="text-lg font-semibold text-foreground mb-3">
-          Recent Workouts
+          最近训练
         </h2>
         {recentSessions.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
-              No workouts yet.{" "}
+              还没有训练记录。{" "}
               {latestPlan ? (
                 <Link
                   href={`/workout?plan=${latestPlan.id}`}
                   className="text-primary underline"
                 >
-                  Start your first workout
+                  开始第一次训练
                 </Link>
               ) : (
                 <Link href="/plans" className="text-primary underline">
-                  Create a plan to get started
+                  创建计划开始训练
                 </Link>
               )}
             </CardContent>
@@ -152,7 +152,7 @@ export default async function DashboardPage() {
         ) : (
           <div className="flex flex-col gap-3">
             {recentSessions.map((session) => {
-              const dateStr = session.date.toLocaleDateString("en-US", {
+              const dateStr = session.date.toLocaleDateString("zh-CN", {
                 weekday: "short",
                 month: "short",
                 day: "numeric",
@@ -163,7 +163,7 @@ export default async function DashboardPage() {
                     <CardContent className="py-4 flex items-center justify-between">
                       <div>
                         <p className="font-medium text-foreground">
-                          {session.plan?.name ?? "Free Workout"}
+                          {session.plan?.name ?? "自由训练"}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {dateStr}

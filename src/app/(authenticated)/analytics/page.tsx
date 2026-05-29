@@ -2,6 +2,15 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { VolumeChart } from "@/components/volume-chart";
 
+const muscleLabels: Record<string, string> = {
+  chest: "胸部",
+  back: "背部",
+  legs: "腿部",
+  shoulders: "肩部",
+  arms: "手臂",
+  core: "核心",
+};
+
 function getMonday(date: Date): string {
   const d = new Date(date);
   const day = d.getDay();
@@ -12,7 +21,7 @@ function getMonday(date: Date): string {
 
 function formatWeekLabel(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return d.toLocaleDateString("zh-CN", { month: "short", day: "numeric" });
 }
 
 export default async function AnalyticsPage() {
@@ -22,8 +31,8 @@ export default async function AnalyticsPage() {
   if (!userId) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-bold text-foreground">Analytics</h1>
-        <p className="text-muted-foreground">Sign in to view your analytics.</p>
+        <h1 className="text-2xl font-bold text-foreground">数据分析</h1>
+        <p className="text-muted-foreground">请登录后查看数据分析。</p>
       </div>
     );
   }
@@ -72,7 +81,7 @@ export default async function AnalyticsPage() {
 
   const muscleData = [...muscleMap.entries()]
     .map(([muscle, volume]) => ({
-      label: muscle.charAt(0).toUpperCase() + muscle.slice(1),
+      label: muscleLabels[muscle] || muscle,
       volume: Math.round(volume),
     }))
     .sort((a, b) => b.volume - a.volume);
@@ -81,19 +90,19 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold text-foreground">Analytics</h1>
+      <h1 className="text-2xl font-bold text-foreground">数据分析</h1>
 
       <div className="rounded-xl border border-cyan-500/30 bg-cyan-500/10 p-6">
         <p className="text-sm font-medium text-cyan-400">
-          Total Volume (12 weeks)
+          总训练量（12周）
         </p>
         <p className="text-3xl font-bold text-cyan-300">
           {totalVolume.toLocaleString()} kg
         </p>
       </div>
 
-      <VolumeChart data={weeklyData} title="Weekly Volume (kg)" />
-      <VolumeChart data={muscleData} title="Volume by Muscle Group (kg)" />
+      <VolumeChart data={weeklyData} title="每周训练量（kg）" />
+      <VolumeChart data={muscleData} title="各肌群训练量（kg）" />
     </div>
   );
 }

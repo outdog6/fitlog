@@ -6,23 +6,23 @@ const features = [
   {
     icon: ClipboardList,
     color: "text-secondary",
-    title: "Plan Your Training",
+    title: "制定训练计划",
     description:
-      "Design mesocycles, build workout templates, and organize exercises into a structured program that keeps you progressing week after week.",
+      "设计中周期训练、构建训练模板、将动作编排成结构化计划，让你持续进步。",
   },
   {
     icon: Play,
     color: "text-accent",
-    title: "Log Every Set",
+    title: "记录每一组",
     description:
-      "Record reps, weight, and RPE for every set in real time. Never lose track of your numbers again with a clean, distraction-free logging flow.",
+      "实时记录每组训练的次数、重量和 RPE。简洁无干扰的训练记录流程，让你不再丢失任何数据。",
   },
   {
     icon: BarChart3,
     color: "text-primary",
-    title: "Analyze Volume",
+    title: "分析训练量",
     description:
-      "Visualize your weekly volume load, rep counts, and session totals. Spot trends, avoid overtraining, and make data-driven programming decisions.",
+      "可视化每周训练量、总次数和训练统计。发现趋势、避免过度训练，用数据驱动训练决策。",
   },
 ];
 
@@ -39,7 +39,7 @@ export default function Home() {
             </span>
           </Link>
           <Link href="/login">
-            <Button variant="outline">Sign In</Button>
+            <Button variant="outline">登录</Button>
           </Link>
         </div>
       </header>
@@ -48,17 +48,16 @@ export default function Home() {
       <section className="flex flex-1 items-center justify-center px-4 py-24">
         <div className="max-w-2xl text-center">
           <h1 className="text-5xl font-bold tracking-tight">
-            Track Every Rep.{" "}
-            <span className="text-primary">Own Your Progress.</span>
+            记录每一次训练。{" "}
+            <span className="text-primary">掌控你的进步。</span>
           </h1>
           <p className="mt-6 text-lg leading-relaxed text-zinc-400">
-            The training log built for serious lifters. Plan your cycles, log
-            every set, and watch your volume grow.
+            为认真训练者打造的训练日志。规划周期、记录每组数据，见证你的训练量不断增长。
           </p>
           <div className="mt-8">
             <Link href="/login">
               <Button size="lg" className="bg-primary hover:bg-primary/80">
-                Get Started
+                开始使用
               </Button>
             </Link>
           </div>

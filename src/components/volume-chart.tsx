@@ -28,7 +28,7 @@ export function VolumeChart({ data, title }: VolumeChartProps) {
           {title}
         </h3>
         <div className="flex items-center justify-center py-12 text-muted-foreground">
-          No data yet
+          暂无数据
         </div>
       </div>
     );

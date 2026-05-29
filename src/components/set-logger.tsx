@@ -138,7 +138,7 @@ export function SetLogger({
                 htmlFor={`reps-${exerciseId}-${index}`}
                 className="text-xs text-muted-foreground"
               >
-                reps
+                次
               </Label>
               <Input
                 id={`reps-${exerciseId}-${index}`}
@@ -160,7 +160,7 @@ export function SetLogger({
               className="border-green-600 text-green-600 hover:bg-green-600/10"
               onClick={() => handleCheck(index)}
               disabled={set.completed}
-              title="Log set"
+              title="记录本组"
             >
               <Check className="size-3.5" />
             </Button>
@@ -172,7 +172,7 @@ export function SetLogger({
               className="text-muted-foreground hover:text-destructive"
               onClick={() => handleDeleteSet(index)}
               disabled={sets.length <= 1}
-              title="Remove set"
+              title="删除本组"
             >
               <Trash2 className="size-3.5" />
             </Button>
@@ -187,7 +187,7 @@ export function SetLogger({
         onClick={handleAddSet}
         className="self-start"
       >
-        + Add Set
+        + 添加一组
       </Button>
     </div>
   );

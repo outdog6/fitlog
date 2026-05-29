@@ -40,15 +40,15 @@ export default async function PlansPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Training Plans</h1>
+          <h1 className="text-2xl font-bold text-foreground">训练计划</h1>
           <p className="text-muted-foreground">
-            Browse templates and manage your plans
+            浏览模板并管理你的计划
           </p>
         </div>
         <Link href="/plans/new">
           <Button>
             <Plus className="size-4" />
-            New Plan
+            新建计划
           </Button>
         </Link>
       </div>
@@ -57,7 +57,7 @@ export default async function PlansPage() {
       {templatePlans.length > 0 && (
         <section>
           <h2 className="text-lg font-semibold text-foreground mb-3">
-            Templates
+            模板
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {templatePlans.map((plan) => (
@@ -76,13 +76,13 @@ export default async function PlansPage() {
       {/* User Plans */}
       <section>
         <h2 className="text-lg font-semibold text-foreground mb-3">
-          {userId ? "Your Plans" : "Plans"}
+          {userId ? "我的计划" : "计划"}
         </h2>
         {userPlans.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-            <p className="text-lg">No plans yet</p>
+            <p className="text-lg">还没有训练计划</p>
             <p className="text-sm">
-              Create your first training plan or start from a template
+              创建第一个训练计划，或从模板开始
             </p>
           </div>
         ) : (

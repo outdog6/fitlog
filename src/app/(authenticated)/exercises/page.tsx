@@ -78,15 +78,15 @@ export default async function ExercisesPage({
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Exercises</h1>
+          <h1 className="text-2xl font-bold text-foreground">动作库</h1>
           <p className="text-muted-foreground">
-            Browse and manage exercises
+            浏览和管理训练动作
           </p>
         </div>
         <Link href="/exercises/new">
           <Button>
             <Plus className="size-4" />
-            Add Exercise
+            添加动作
           </Button>
         </Link>
       </div>
@@ -95,9 +95,9 @@ export default async function ExercisesPage({
 
       {exercises.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-          <p className="text-lg">No exercises found</p>
+          <p className="text-lg">未找到动作</p>
           <p className="text-sm">
-            Try adjusting your filters or create a new exercise
+            尝试调整筛选条件或创建新动作
           </p>
         </div>
       ) : (
