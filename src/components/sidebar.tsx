@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { href: "/dashboard", label: "仪表盘", icon: LayoutDashboard },
+  { href: "/dashboard", label: "训练台", icon: LayoutDashboard },
   { href: "/plans", label: "训练计划", icon: ClipboardList },
   { href: "/exercises", label: "动作库", icon: Dumbbell },
   { href: "/analytics", label: "数据分析", icon: BarChart3 },
