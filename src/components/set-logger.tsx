@@ -1,0 +1,194 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Check, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface SetRow {
+  setNumber: number;
+  weight: string;
+  reps: string;
+  completed: boolean;
+}
+
+interface SetLoggerProps {
+  exerciseName: string;
+  exerciseId: string;
+  onSetRecorded: (
+    exerciseId: string,
+    weight: number,
+    reps: number,
+    setNumber: number
+  ) => void;
+}
+
+export function SetLogger({
+  exerciseName,
+  exerciseId,
+  onSetRecorded,
+}: SetLoggerProps) {
+  const [sets, setSets] = useState<SetRow[]>([
+    { setNumber: 1, weight: "", reps: "", completed: false },
+  ]);
+
+  function handleCheck(index: number) {
+    const setToCheck = sets[index];
+    if (!setToCheck) return;
+
+    const weight = parseFloat(setToCheck.weight);
+    const reps = parseInt(setToCheck.reps, 10);
+
+    if (isNaN(weight) || weight <= 0) return;
+    if (isNaN(reps) || reps <= 0) return;
+
+    // Notify parent
+    onSetRecorded(exerciseId, weight, reps, setToCheck.setNumber);
+
+    // Mark as completed
+    const updatedSets = sets.map((s, i) =>
+      i === index ? { ...s, completed: true } : s
+    );
+
+    // Auto-add next empty set if this was the last row
+    if (index === sets.length - 1) {
+      updatedSets.push({
+        setNumber: setToCheck.setNumber + 1,
+        weight: "",
+        reps: "",
+        completed: false,
+      });
+    }
+
+    setSets(updatedSets);
+  }
+
+  function handleAddSet() {
+    const maxSetNumber = sets.reduce(
+      (max, s) => Math.max(max, s.setNumber),
+      0
+    );
+    setSets([
+      ...sets,
+      {
+        setNumber: maxSetNumber + 1,
+        weight: "",
+        reps: "",
+        completed: false,
+      },
+    ]);
+  }
+
+  function handleDeleteSet(index: number) {
+    if (sets.length <= 1) return;
+    setSets(sets.filter((_, i) => i !== index));
+  }
+
+  function handleWeightChange(index: number, value: string) {
+    if (sets[index]?.completed) return;
+    setSets(sets.map((s, i) => (i === index ? { ...s, weight: value } : s)));
+  }
+
+  function handleRepsChange(index: number, value: string) {
+    if (sets[index]?.completed) return;
+    setSets(sets.map((s, i) => (i === index ? { ...s, reps: value } : s)));
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <h3 className="text-lg font-semibold text-foreground">{exerciseName}</h3>
+
+      <div className="flex flex-col gap-2">
+        {sets.map((set, index) => (
+          <div
+            key={`${exerciseId}-${set.setNumber}-${index}`}
+            className={cn(
+              "flex items-end gap-2",
+              set.completed && "opacity-50 pointer-events-none"
+            )}
+          >
+            <span className="w-6 text-center text-sm text-muted-foreground tabular-nums">
+              {set.setNumber}
+            </span>
+
+            <div className="flex flex-col gap-0.5">
+              <Label
+                htmlFor={`weight-${exerciseId}-${index}`}
+                className="text-xs text-muted-foreground"
+              >
+                kg
+              </Label>
+              <Input
+                id={`weight-${exerciseId}-${index}`}
+                type="number"
+                inputMode="decimal"
+                step="any"
+                placeholder="0"
+                value={set.weight}
+                onChange={(e) => handleWeightChange(index, e.target.value)}
+                disabled={set.completed}
+                className="w-20"
+              />
+            </div>
+
+            <div className="flex flex-col gap-0.5">
+              <Label
+                htmlFor={`reps-${exerciseId}-${index}`}
+                className="text-xs text-muted-foreground"
+              >
+                reps
+              </Label>
+              <Input
+                id={`reps-${exerciseId}-${index}`}
+                type="number"
+                inputMode="numeric"
+                step="1"
+                placeholder="0"
+                value={set.reps}
+                onChange={(e) => handleRepsChange(index, e.target.value)}
+                disabled={set.completed}
+                className="w-16"
+              />
+            </div>
+
+            <Button
+              type="button"
+              size="icon-xs"
+              variant="outline"
+              className="border-green-600 text-green-600 hover:bg-green-600/10"
+              onClick={() => handleCheck(index)}
+              disabled={set.completed}
+              title="Log set"
+            >
+              <Check className="size-3.5" />
+            </Button>
+
+            <Button
+              type="button"
+              size="icon-xs"
+              variant="ghost"
+              className="text-muted-foreground hover:text-destructive"
+              onClick={() => handleDeleteSet(index)}
+              disabled={sets.length <= 1}
+              title="Remove set"
+            >
+              <Trash2 className="size-3.5" />
+            </Button>
+          </div>
+        ))}
+      </div>
+
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={handleAddSet}
+        className="self-start"
+      >
+        + Add Set
+      </Button>
+    </div>
+  );
+}
