@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Check, Trash2 } from "lucide-react";
+import { Check, Trash2, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SetRow {
@@ -91,6 +91,14 @@ export function SetLogger({
     setSets(sets.map((s, i) => (i === index ? { ...s, weight: value } : s)));
   }
 
+  function adjustWeight(index: number, delta: number) {
+    if (sets[index]?.completed) return;
+    const current = parseFloat(sets[index].weight) || 0;
+    const next = Math.max(0, current + delta);
+    const fixed = Math.round(next * 100) / 100;
+    setSets(sets.map((s, i) => (i === index ? { ...s, weight: String(fixed) } : s)));
+  }
+
   function handleRepsChange(index: number, value: string) {
     if (sets[index]?.completed) return;
     setSets(sets.map((s, i) => (i === index ? { ...s, reps: value } : s)));
@@ -114,23 +122,40 @@ export function SetLogger({
             </span>
 
             <div className="flex flex-col gap-0.5">
-              <Label
-                htmlFor={`weight-${exerciseId}-${index}`}
-                className="text-xs text-muted-foreground"
-              >
-                kg
-              </Label>
-              <Input
-                id={`weight-${exerciseId}-${index}`}
-                type="number"
-                inputMode="decimal"
-                step="any"
-                placeholder="0"
-                value={set.weight}
-                onChange={(e) => handleWeightChange(index, e.target.value)}
-                disabled={set.completed}
-                className="w-20"
-              />
+              <Label className="text-xs text-muted-foreground">kg</Label>
+              <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                  onClick={() => adjustWeight(index, -2.5)}
+                  disabled={set.completed}
+                >
+                  <Minus className="size-3" />
+                </Button>
+                <Input
+                  type="number"
+                  inputMode="decimal"
+                  step="any"
+                  min="0"
+                  placeholder="0"
+                  value={set.weight}
+                  onChange={(e) => handleWeightChange(index, e.target.value)}
+                  disabled={set.completed}
+                  className="w-16 text-center [&::-webkit-inner-spin-button]:appearance-none"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                  onClick={() => adjustWeight(index, 2.5)}
+                  disabled={set.completed}
+                >
+                  <Plus className="size-3" />
+                </Button>
+              </div>
             </div>
 
             <div className="flex flex-col gap-0.5">
