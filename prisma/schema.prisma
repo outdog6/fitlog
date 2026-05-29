@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,4 +8,107 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+enum Muscle {
+  chest
+  back
+  legs
+  shoulders
+  arms
+  core
+}
+
+enum Equipment {
+  barbell
+  dumbbell
+  cable
+  bodyweight
+  machine
+}
+
+model User {
+  id           String          @id @default(uuid())
+  email        String          @unique
+  name         String
+  passwordHash String
+  sessions     Session[]
+  plans        TrainingPlan[]
+  sessions2    WorkoutSession[]
+  exercises    Exercise[]      @relation("UserExercises")
+  createdAt    DateTime        @default(now())
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+}
+
+model Exercise {
+  id               String         @id @default(uuid())
+  name             String
+  primaryMuscle    Muscle
+  secondaryMuscles Muscle[]
+  equipment        Equipment
+  description      String         @default("")
+  instructions     String         @default("")
+  imageUrl         String?
+  isPreset         Boolean        @default(false)
+  userId           String?
+  createdBy        User?          @relation("UserExercises", fields: [userId], references: [id])
+  planExercises    PlanExercise[]
+  workoutSets      WorkoutSet[]
+}
+
+model TrainingPlan {
+  id            String           @id @default(uuid())
+  name          String
+  description   String?
+  isTemplate    Boolean          @default(false)
+  userId        String
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planExercises PlanExercise[]
+  sessions      WorkoutSession[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model PlanExercise {
+  id          String       @id @default(uuid())
+  planId      String
+  plan        TrainingPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  exerciseId  String
+  exercise    Exercise     @relation(fields: [exerciseId], references: [id])
+  weekNumber  Int
+  dayOfWeek   Int
+  order       Int
+  targetSets  Int
+  targetReps  String       @default("8-12")
+}
+
+model WorkoutSession {
+  id       String        @id @default(uuid())
+  userId   String
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId   String?
+  plan     TrainingPlan? @relation(fields: [planId], references: [id])
+  date     DateTime      @default(now())
+  duration Int?
+  notes    String?
+  sets     WorkoutSet[]
+}
+
+model WorkoutSet {
+  id         String         @id @default(uuid())
+  sessionId  String
+  session   WorkoutSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exerciseId String
+  exercise   Exercise       @relation(fields: [exerciseId], references: [id])
+  setNumber  Int
+  weight     Float
+  reps       Int
+  rpe        Float?
 }
