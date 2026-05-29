@@ -103,6 +103,13 @@ export function SetLogger({
     setSets(sets.map((s, i) => (i === index ? { ...s, weight: String(fixed) } : s)));
   }
 
+  function adjustReps(index: number, delta: number) {
+    if (sets[index]?.completed) return;
+    const current = parseInt(sets[index].reps) || 0;
+    const next = Math.max(0, current + delta);
+    handleRepsChange(index, String(next));
+  }
+
   function handleRepsChange(index: number, value: string) {
     if (sets[index]?.completed) return;
     setSets(sets.map((s, i) => (i === index ? { ...s, reps: value } : s)));
@@ -163,23 +170,40 @@ export function SetLogger({
             </div>
 
             <div className="flex flex-col gap-0.5">
-              <Label
-                htmlFor={`reps-${exerciseId}-${index}`}
-                className="text-xs text-muted-foreground"
-              >
-                次
-              </Label>
-              <Input
-                id={`reps-${exerciseId}-${index}`}
-                type="number"
-                inputMode="numeric"
-                step="1"
-                placeholder="0"
-                value={set.reps}
-                onChange={(e) => handleRepsChange(index, e.target.value)}
-                disabled={set.completed}
-                className="w-16"
-              />
+              <Label className="text-xs text-muted-foreground">次</Label>
+              <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                  onClick={() => adjustReps(index, -1)}
+                  disabled={set.completed}
+                >
+                  <Minus className="size-3" />
+                </Button>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  step="1"
+                  min="0"
+                  placeholder="0"
+                  value={set.reps}
+                  onChange={(e) => handleRepsChange(index, e.target.value)}
+                  disabled={set.completed}
+                  className="w-14 text-center [&::-webkit-inner-spin-button]:appearance-none"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                  onClick={() => adjustReps(index, 1)}
+                  disabled={set.completed}
+                >
+                  <Plus className="size-3" />
+                </Button>
+              </div>
             </div>
 
             <Button
