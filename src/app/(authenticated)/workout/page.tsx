@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { SetLogger } from "@/components/set-logger";
-import { Loader2 } from "lucide-react";
+import { Loader2, Timer } from "lucide-react";
 
 interface PlanExercise {
   id: string;
@@ -29,12 +29,24 @@ function WorkoutContent() {
   const searchParams = useSearchParams();
   const planId = searchParams.get("plan");
 
+  const startTimeRef = useRef(Date.now());
+  const [elapsed, setElapsed] = useState(0);
+
   const [exercises, setExercises] = useState<PlanExercise[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [recordedSets, setRecordedSets] = useState<RecordedSet[]>([]);
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => setElapsed(Math.floor((Date.now() - startTimeRef.current) / 1000)), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const minutes = Math.floor(elapsed / 60);
+  const seconds = elapsed % 60;
+  const timeDisplay = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
   useEffect(() => {
     if (!planId) {
@@ -86,6 +98,7 @@ function WorkoutContent() {
           planId: planId || null,
           sets: recordedSets,
           notes: notes.trim() || null,
+          duration: Math.max(1, Math.round(elapsed / 60)),
         }),
       });
 
@@ -137,9 +150,15 @@ function WorkoutContent() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">当前训练</h1>
-        <p className="text-muted-foreground">记录每一组训练</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">当前训练</h1>
+          <p className="text-muted-foreground">记录每一组训练</p>
+        </div>
+        <div className="flex items-center gap-2 text-lg font-mono tabular-nums text-muted-foreground">
+          <Timer className="size-5" />
+          <span>{timeDisplay}</span>
+        </div>
       </div>
 
       {fetchError && (

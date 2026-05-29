@@ -79,7 +79,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { planId, sets, notes } = body;
+    const { planId, sets, notes, duration } = body;
 
     if (!sets || !Array.isArray(sets) || sets.length === 0) {
       return NextResponse.json(
@@ -118,6 +118,7 @@ export async function POST(request: Request) {
         userId: session.user.id,
         planId: planId || null,
         notes: notes || null,
+        duration: typeof duration === "number" && duration > 0 ? duration : null,
       },
     });
 
