@@ -58,12 +58,12 @@ export function SetLogger({
       i === index ? { ...s, completed: true } : s
     );
 
-    // Auto-add next empty set if this was the last row
+    // Auto-add next empty set if this was the last row, carry forward weight & reps
     if (index === sets.length - 1) {
       updatedSets.push({
         setNumber: setToCheck.setNumber + 1,
-        weight: "",
-        reps: "",
+        weight: setToCheck.weight,
+        reps: setToCheck.reps,
         completed: false,
       });
     }
@@ -72,16 +72,14 @@ export function SetLogger({
   }
 
   function handleAddSet() {
-    const maxSetNumber = sets.reduce(
-      (max, s) => Math.max(max, s.setNumber),
-      0
-    );
+    const maxSetNumber = sets.reduce((max, s) => Math.max(max, s.setNumber), 0);
+    const last = sets[sets.length - 1];
     setSets([
       ...sets,
       {
         setNumber: maxSetNumber + 1,
-        weight: "",
-        reps: "",
+        weight: last?.weight ?? "",
+        reps: last?.reps ?? "",
         completed: false,
       },
     ]);
