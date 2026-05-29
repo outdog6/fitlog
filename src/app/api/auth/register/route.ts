@@ -5,7 +5,9 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, name, password } = body;
+    const email = body.email?.trim().toLowerCase();
+    const name = body.name?.trim();
+    const { password } = body;
 
     // Validate required fields
     if (!email || !name || !password) {
@@ -72,7 +74,13 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
+      return NextResponse.json(
+        { error: "A user with this email already exists" },
+        { status: 409 }
+      );
+    }
     console.error("Registration error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
