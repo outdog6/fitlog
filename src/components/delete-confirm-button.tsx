@@ -29,16 +29,11 @@ export function DeleteConfirmButton({ sessionId, sessionName }: { sessionId: str
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="text-muted-foreground hover:text-destructive shrink-0"
-          title="删除此记录"
-        >
-          <Trash2 className="size-4" />
-        </Button>
+      <DialogTrigger
+        className="inline-flex items-center justify-center rounded-lg text-muted-foreground hover:text-destructive shrink-0 h-9 w-9"
+        aria-label="删除此记录"
+      >
+        <Trash2 className="size-4" />
       </DialogTrigger>
       <DialogContent className="bg-card border-border">
         <DialogHeader>
