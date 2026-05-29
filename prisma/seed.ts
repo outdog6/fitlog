@@ -129,6 +129,46 @@ async function main() {
       description: "垂直拉类器械动作，增加背阔肌宽度。",
       instructions: "1. 坐在高位下拉器上，调整腿部固定垫。\n2. 握距比肩宽，正手握杆。\n3. 微向后倾，将杆拉至上胸口。\n4. 收缩背阔肌，然后控制杆回到全臂伸展位置。",
     },
+    {
+      name: "坐姿器械推胸",
+      primaryMuscle: "chest",
+      secondaryMuscles: JSON.stringify(["shoulders", "arms"]),
+      equipment: "machine",
+      description: "固定器械推胸动作，轨迹稳定，适合新手和力竭训练。",
+      instructions: "1. 坐于器械上，调整座椅高度使手柄位于胸部中段。\n2. 背部紧贴靠垫，双手握住手柄。\n3. 向前推至手臂接近伸直（不锁肘）。\n4. 控制还原，感受胸肌拉伸。",
+    },
+    {
+      name: "哑铃上斜卧推",
+      primaryMuscle: "chest",
+      secondaryMuscles: JSON.stringify(["shoulders", "arms"]),
+      equipment: "dumbbell",
+      description: "上斜角度哑铃推举，侧重上胸肌群的发展。",
+      instructions: "1. 将哑铃凳调至30-45度上斜角度。\n2. 双手各持哑铃，仰卧于凳上，哑铃置于胸部两侧。\n3. 向上推举哑铃至手臂接近伸直，哑铃在锁骨上方。\n4. 控制下放，感受上胸拉伸。",
+    },
+    {
+      name: "仰卧上斜推胸",
+      primaryMuscle: "chest",
+      secondaryMuscles: JSON.stringify(["shoulders", "arms"]),
+      equipment: "barbell",
+      description: "上斜角度杠铃推举，增强上胸厚度和力量。",
+      instructions: "1. 将凳子调至30-45度上斜角度，仰卧在杠铃架下。\n2. 握距比肩略宽，出杠，杠铃位于锁骨上方。\n3. 下放杠铃至胸口上方，肘部约呈45度。\n4. 推起至手臂接近伸直，保持肩胛收紧。",
+    },
+    {
+      name: "双杠臂屈伸",
+      primaryMuscle: "chest",
+      secondaryMuscles: JSON.stringify(["shoulders", "arms"]),
+      equipment: "bodyweight",
+      description: "自重训练经典动作，身体前倾侧重胸肌下部。",
+      instructions: "1. 双手撑于双杠上，手臂伸直支撑身体。\n2. 身体前倾，屈肘下放身体至肩膀低于肘部。\n3. 感受胸肌下部拉伸后发力推起。\n4. 重复动作，保持身体稳定不摆动。",
+    },
+    {
+      name: "蝴蝶机夹胸",
+      primaryMuscle: "chest",
+      secondaryMuscles: JSON.stringify(["shoulders"]),
+      equipment: "machine",
+      description: "器械飞鸟动作，孤立训练胸肌中缝，刻画胸部线条。",
+      instructions: "1. 坐于蝴蝶机上，调整座椅使手臂与肩同高。\n2. 前臂靠于垫板上，肘部微屈。\n3. 双臂向中间靠拢，感受胸肌收缩。\n4. 控制打开回到起始位置，保持胸肌张力。",
+    },
   ];
 
   // Create system user for templates
@@ -154,6 +194,11 @@ async function main() {
     "面拉": "face-pull",
     "哑铃箭步蹲": "dumbbell-lunges",
     "高位下拉": "lat-pulldown",
+    "坐姿器械推胸": "seated-machine-chest-press",
+    "哑铃上斜卧推": "dumbbell-incline-bench-press",
+    "仰卧上斜推胸": "incline-bench-press",
+    "双杠臂屈伸": "chest-dips",
+    "蝴蝶机夹胸": "pec-deck-fly",
   };
 
   const exerciseMap: Record<string, string> = {};
