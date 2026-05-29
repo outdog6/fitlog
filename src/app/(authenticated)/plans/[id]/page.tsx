@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/table";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { deletePlanExercise } from "./actions";
+import { AddExerciseDialog } from "@/components/add-exercise-dialog";
 
 type PageParams = Promise<{ id: string }>;
 
@@ -101,6 +102,7 @@ export default async function PlanDetailPage({
             </span>
           )}
         </div>
+        {isOwner && !isTemplate && <AddExerciseDialog planId={plan.id} />}
       </div>
 
       {weeks.length === 0 ? (
