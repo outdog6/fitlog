@@ -19,6 +19,10 @@
   --color-muted-foreground: #a1a1aa;
   --color-border: #27272a;
   --color-ring: #f97316;
+  --color-destructive: var(--destructive);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-input: var(--input);
   --radius: 0.5rem;
 }
 
