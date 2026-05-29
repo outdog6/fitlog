@@ -2,9 +2,12 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
+  if (process.env.DESKTOP_MODE === "true") {
+    return NextResponse.next();
+  }
+
   const { pathname } = req.nextUrl;
 
-  // Allow auth API routes and static assets
   if (
     pathname.startsWith("/api/auth/") ||
     pathname.startsWith("/api/setup") ||
@@ -33,7 +36,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.svg|.*\\.png).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.svg|.*\\.png).*)"],
 };

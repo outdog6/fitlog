@@ -178,6 +178,13 @@ async function main() {
     create: { id: "system", email: "system@fitlog.local", name: "System", passwordHash: "" },
   });
 
+  // Create local user for desktop mode
+  await prisma.user.upsert({
+    where: { id: "local-user" },
+    update: {},
+    create: { id: "local-user", email: "local@fitlog.app", name: "本地用户", passwordHash: "" },
+  });
+
   const englishSlugs: Record<string, string> = {
     "深蹲": "barbell-squat",
     "卧推": "bench-press",
