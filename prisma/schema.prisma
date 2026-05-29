@@ -58,7 +58,7 @@ model Exercise {
   imageUrl         String?
   isPreset         Boolean        @default(false)
   userId           String?
-  createdBy        User?          @relation("UserExercises", fields: [userId], references: [id])
+  createdBy        User?          @relation("UserExercises", fields: [userId], references: [id], onDelete: Cascade)
   planExercises    PlanExercise[]
   workoutSets      WorkoutSet[]
 }

@@ -1,6 +1,6 @@
 import { PrismaClient } from "../src/generated/prisma/client";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({});
 
 async function main() {
   console.log("Seeding database...");
@@ -10,7 +10,7 @@ async function main() {
     {
       name: "Barbell Squat",
       primaryMuscle: "legs" as const,
-      secondaryMuscles: ["core"] as string[],
+      secondaryMuscles: ["core"] ,
       equipment: "barbell" as const,
       description:
         "A compound lower-body exercise that targets the quadriceps, hamstrings, and glutes.",
@@ -21,7 +21,7 @@ async function main() {
     {
       name: "Bench Press",
       primaryMuscle: "chest" as const,
-      secondaryMuscles: ["shoulders", "arms"] as string[],
+      secondaryMuscles: ["shoulders", "arms"] ,
       equipment: "barbell" as const,
       description:
         "A classic upper-body press that builds chest, shoulder, and tricep strength.",
@@ -31,7 +31,7 @@ async function main() {
     {
       name: "Deadlift",
       primaryMuscle: "back" as const,
-      secondaryMuscles: ["legs", "core"] as string[],
+      secondaryMuscles: ["legs", "core"] ,
       equipment: "barbell" as const,
       description:
         "A full-body hinge movement that heavily targets the posterior chain.",
@@ -41,7 +41,7 @@ async function main() {
     {
       name: "Overhead Press",
       primaryMuscle: "shoulders" as const,
-      secondaryMuscles: ["arms"] as string[],
+      secondaryMuscles: ["arms"] ,
       equipment: "barbell" as const,
       description:
         "A vertical press that develops shoulder and tricep strength.",
@@ -51,7 +51,7 @@ async function main() {
     {
       name: "Barbell Row",
       primaryMuscle: "back" as const,
-      secondaryMuscles: ["arms"] as string[],
+      secondaryMuscles: ["arms"] ,
       equipment: "barbell" as const,
       description:
         "A bent-over pulling movement that targets the lats, rhomboids, and biceps.",
@@ -61,7 +61,7 @@ async function main() {
     {
       name: "Pull-Up",
       primaryMuscle: "back" as const,
-      secondaryMuscles: ["arms"] as string[],
+      secondaryMuscles: ["arms"] ,
       equipment: "bodyweight" as const,
       description:
         "A bodyweight vertical pull that builds back width and arm strength.",
@@ -71,7 +71,7 @@ async function main() {
     {
       name: "Dumbbell Curl",
       primaryMuscle: "arms" as const,
-      secondaryMuscles: [] as string[],
+      secondaryMuscles: [] ,
       equipment: "dumbbell" as const,
       description:
         "An isolation exercise for the biceps.",
@@ -81,7 +81,7 @@ async function main() {
     {
       name: "Tricep Pushdown",
       primaryMuscle: "arms" as const,
-      secondaryMuscles: [] as string[],
+      secondaryMuscles: [] ,
       equipment: "cable" as const,
       description:
         "An isolation exercise that targets the triceps using a cable machine.",
@@ -91,7 +91,7 @@ async function main() {
     {
       name: "Leg Press",
       primaryMuscle: "legs" as const,
-      secondaryMuscles: ["core"] as string[],
+      secondaryMuscles: ["core"] ,
       equipment: "machine" as const,
       description:
         "A machine-based compound movement for the quadriceps, hamstrings, and glutes.",
@@ -101,7 +101,7 @@ async function main() {
     {
       name: "Romanian Deadlift",
       primaryMuscle: "legs" as const,
-      secondaryMuscles: ["back"] as string[],
+      secondaryMuscles: ["back"] ,
       equipment: "barbell" as const,
       description:
         "A hip-hinge movement emphasizing hamstring and glute engagement.",
@@ -111,7 +111,7 @@ async function main() {
     {
       name: "Lateral Raise",
       primaryMuscle: "shoulders" as const,
-      secondaryMuscles: [] as string[],
+      secondaryMuscles: [] ,
       equipment: "dumbbell" as const,
       description:
         "An isolation exercise for the medial deltoids.",
@@ -121,7 +121,7 @@ async function main() {
     {
       name: "Plank",
       primaryMuscle: "core" as const,
-      secondaryMuscles: [] as string[],
+      secondaryMuscles: [] ,
       equipment: "bodyweight" as const,
       description:
         "An isometric core exercise that builds endurance in the abdominals and lower back.",
@@ -131,7 +131,7 @@ async function main() {
     {
       name: "Face Pull",
       primaryMuscle: "shoulders" as const,
-      secondaryMuscles: ["back"] as string[],
+      secondaryMuscles: ["back"] ,
       equipment: "cable" as const,
       description:
         "A cable exercise targeting the rear delts and upper back, great for shoulder health.",
@@ -141,7 +141,7 @@ async function main() {
     {
       name: "Dumbbell Lunges",
       primaryMuscle: "legs" as const,
-      secondaryMuscles: ["core"] as string[],
+      secondaryMuscles: ["core"] ,
       equipment: "dumbbell" as const,
       description:
         "A unilateral lower-body movement that builds quad, glute, and stabiliser strength.",
@@ -151,7 +151,7 @@ async function main() {
     {
       name: "Lat Pulldown",
       primaryMuscle: "back" as const,
-      secondaryMuscles: ["arms"] as string[],
+      secondaryMuscles: ["arms"] ,
       equipment: "machine" as const,
       description:
         "A vertical pulling machine exercise that targets the latissimus dorsi.",
@@ -173,7 +173,7 @@ async function main() {
         equipment: ex.equipment,
         description: ex.description,
         instructions: ex.instructions,
-        isPreset: ex.isPreset,
+        isPreset: true,
       },
     });
     exerciseMap[ex.name] = exercise.id;
