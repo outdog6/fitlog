@@ -1,6 +1,11 @@
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient, $Enums } from "../src/generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const prisma = new PrismaClient({});
+const prisma = new PrismaClient({
+  adapter: new PrismaPg(process.env.DATABASE_URL!),
+});
+
+type Muscle = $Enums.Muscle;
 
 async function main() {
   console.log("Seeding database...");
@@ -171,7 +176,7 @@ async function main() {
         id: slug,
         name: ex.name,
         primaryMuscle: ex.primaryMuscle,
-        secondaryMuscles: ex.secondaryMuscles,
+        secondaryMuscles: ex.secondaryMuscles as Muscle[],
         equipment: ex.equipment,
         description: ex.description,
         instructions: ex.instructions,
