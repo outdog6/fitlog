@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -15,10 +15,10 @@ interface TemplatePlan {
   description: string | null;
 }
 
-export default function NewPlanPage() {
+function NewPlanForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const templateId = searchParams.get("template");
+  const templateId = searchParams?.get("template");
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -156,5 +156,13 @@ export default function NewPlanPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function NewPlanPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center py-16"><Loader2 className="size-6 animate-spin" /></div>}>
+      <NewPlanForm />
+    </Suspense>
   );
 }
