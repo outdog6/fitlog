@@ -1,171 +1,143 @@
-import { PrismaClient, $Enums } from "../src/generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 
-const prisma = new PrismaClient({
-  adapter: new PrismaPg(process.env.DATABASE_URL!),
-});
-
-type Muscle = $Enums.Muscle;
+const adapter = new PrismaLibSql({ url: "file:dev.db" });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Seeding database...");
 
-  // ── Exercises ──────────────────────────────────────────────────────
   const exerciseData = [
     {
-      name: "Barbell Squat",
-      primaryMuscle: "legs" as const,
-      secondaryMuscles: ["core"] ,
-      equipment: "barbell" as const,
-      description:
-        "A compound lower-body exercise that targets the quadriceps, hamstrings, and glutes.",
-      instructions:
-        "1. Set a barbell on a squat rack at upper-chest height.\n2. Step under the bar, place it on your upper back, and unrack.\n3. Step back, feet shoulder-width apart, toes slightly out.\n4. Brace your core, bend knees and hips to squat down until thighs are at least parallel.\n5. Drive through your heels to stand back up.",
+      name: "深蹲",
+      primaryMuscle: "legs",
+      secondaryMuscles: JSON.stringify(["core"]),
+      equipment: "barbell",
+      description: "下肢复合动作，主要锻炼股四头肌、腘绳肌和臀肌。",
+      instructions: "1. 将杠铃放在深蹲架上，高度与胸口齐平。\n2. 从下方进入杠铃，将杠铃放在上背部，出杠。\n3. 后退，双脚与肩同宽，脚尖微微向外。\n4. 收紧核心，屈膝屈髋下蹲，直到大腿至少与地面平行。\n5. 通过脚后跟发力站起。",
       isPreset: true,
     },
     {
-      name: "Bench Press",
-      primaryMuscle: "chest" as const,
-      secondaryMuscles: ["shoulders", "arms"] ,
-      equipment: "barbell" as const,
-      description:
-        "A classic upper-body press that builds chest, shoulder, and tricep strength.",
-      instructions:
-        "1. Lie on a flat bench with eyes under the bar.\n2. Grip the bar slightly wider than shoulder-width.\n3. Unrack and lower the bar to your mid-chest with control.\n4. Press the bar back up to full arm extension without locking out elbows.",
+      name: "卧推",
+      primaryMuscle: "chest",
+      secondaryMuscles: JSON.stringify(["shoulders", "arms"]),
+      equipment: "barbell",
+      description: "经典的上肢推类动作，增强胸部、肩部和肱三头肌力量。",
+      instructions: "1. 平躺在平板凳上，眼睛在杠铃正下方。\n2. 握距比肩略宽。\n3. 出杠，控制杠铃下放到胸部中间。\n4. 将杠铃推回起始位置，肘部不完全锁死。",
     },
     {
-      name: "Deadlift",
-      primaryMuscle: "back" as const,
-      secondaryMuscles: ["legs", "core"] ,
-      equipment: "barbell" as const,
-      description:
-        "A full-body hinge movement that heavily targets the posterior chain.",
-      instructions:
-        "1. Stand with mid-foot under the barbell, feet hip-width apart.\n2. Hinge at hips, bend knees, and grip the bar just outside shins.\n3. Keep back flat, chest up, and pull the slack out of the bar.\n4. Drive through heels, extend hips and knees to stand tall.\n5. Lower the bar by hinging at the hips with control.",
+      name: "硬拉",
+      primaryMuscle: "back",
+      secondaryMuscles: JSON.stringify(["legs", "core"]),
+      equipment: "barbell",
+      description: "全身性的髋铰链动作，侧重训练后链肌群。",
+      instructions: "1. 站在杠铃前，双脚与髋同宽，杠铃在脚掌中间上方。\n2. 屈髋屈膝，握住杠铃，握距与肩同宽。\n3. 保持背部挺直，挺胸，拉紧杠铃。\n4. 通过脚后跟发力，伸展髋膝站起。\n5. 沿原路放下杠铃，髋部先动。",
     },
     {
-      name: "Overhead Press",
-      primaryMuscle: "shoulders" as const,
-      secondaryMuscles: ["arms"] ,
-      equipment: "barbell" as const,
-      description:
-        "A vertical press that develops shoulder and tricep strength.",
-      instructions:
-        "1. Set a barbell at upper-chest height on a rack.\n2. Grip slightly wider than shoulders, unrack, and rest the bar on your front delts.\n3. Brace core, press the bar overhead until arms are fully extended.\n4. Lower the bar back to the starting position with control.",
+      name: "实力举",
+      primaryMuscle: "shoulders",
+      secondaryMuscles: JSON.stringify(["arms"]),
+      equipment: "barbell",
+      description: "发展肩部和肱三头肌力量的竖直推举。",
+      instructions: "1. 将杠铃放在力量架上，高度约在胸口位置。\n2. 握距略宽于肩，出杠，杠铃靠在前三角肌上。\n3. 收紧核心，将杠铃举过头顶至手臂完全伸展。\n4. 控制杠铃回到起始位置。",
     },
     {
-      name: "Barbell Row",
-      primaryMuscle: "back" as const,
-      secondaryMuscles: ["arms"] ,
-      equipment: "barbell" as const,
-      description:
-        "A bent-over pulling movement that targets the lats, rhomboids, and biceps.",
-      instructions:
-        "1. Stand over a barbell, hinge forward until your torso is roughly parallel to the floor.\n2. Grip the bar slightly wider than shoulder-width.\n3. Pull the bar toward your lower chest/upper abdomen.\n4. Squeeze shoulder blades, then lower the bar with control.",
+      name: "杠铃划船",
+      primaryMuscle: "back",
+      secondaryMuscles: JSON.stringify(["arms"]),
+      equipment: "barbell",
+      description: "俯身划船动作，锻炼背阔肌、菱形肌和肱二头肌。",
+      instructions: "1. 站在杠铃前，前倾至躯干与地面接近平行。\n2. 握距略宽于肩。\n3. 将杠铃拉向胸口下方/上腹部。\n4. 收缩肩胛骨，然后控制下放杠铃。",
     },
     {
-      name: "Pull-Up",
-      primaryMuscle: "back" as const,
-      secondaryMuscles: ["arms"] ,
-      equipment: "bodyweight" as const,
-      description:
-        "A bodyweight vertical pull that builds back width and arm strength.",
-      instructions:
-        "1. Hang from a pull-up bar with an overhand grip, hands shoulder-width or wider.\n2. Pull yourself up until your chin clears the bar.\n3. Lower with control to full arm extension.\n4. Avoid excessive swinging or kipping.",
+      name: "引体向上",
+      primaryMuscle: "back",
+      secondaryMuscles: JSON.stringify(["arms"]),
+      equipment: "bodyweight",
+      description: "自重垂直拉类动作，增强背部宽度和手臂力量。",
+      instructions: "1. 正手握住引体杆，握距与肩同宽或略宽。\n2. 将自己向上拉，直到下巴超过杆。\n3. 控制下放至手臂完全伸展。\n4. 避免过度摇摆或借力。",
     },
     {
-      name: "Dumbbell Curl",
-      primaryMuscle: "arms" as const,
-      secondaryMuscles: [] ,
-      equipment: "dumbbell" as const,
-      description:
-        "An isolation exercise for the biceps.",
-      instructions:
-        "1. Stand holding a dumbbell in each hand, arms fully extended, palms facing forward.\n2. Curl the dumbbells up toward your shoulders, keeping elbows stationary.\n3. Squeeze biceps at the top, then lower with control.",
+      name: "哑铃弯举",
+      primaryMuscle: "arms",
+      secondaryMuscles: JSON.stringify([]),
+      equipment: "dumbbell",
+      description: "孤立训练肱二头肌。",
+      instructions: "1. 站立，双手各持哑铃，手臂自然下垂，掌心向前。\n2. 弯举哑铃至肩膀高度，肘部固定不动。\n3. 在顶部收缩肱二头肌，然后控制下放。",
     },
     {
-      name: "Tricep Pushdown",
-      primaryMuscle: "arms" as const,
-      secondaryMuscles: [] ,
-      equipment: "cable" as const,
-      description:
-        "An isolation exercise that targets the triceps using a cable machine.",
-      instructions:
-        "1. Attach a straight or rope attachment to the high pulley of a cable station.\n2. Grip the attachment, elbows tucked at your sides.\n3. Push the attachment down until arms are fully extended.\n4. Return slowly to the starting position, keeping elbows pinned.",
+      name: "绳索下压",
+      primaryMuscle: "arms",
+      secondaryMuscles: JSON.stringify([]),
+      equipment: "cable",
+      description: "使用绳索机训练肱三头肌的孤立动作。",
+      instructions: "1. 在绳索机高位滑轮上安装直杆或绳索手柄。\n2. 握住手柄，肘部紧贴身体两侧。\n3. 下压手柄至手臂完全伸展。\n4. 缓慢回到起始位置，肘部不动。",
     },
     {
-      name: "Leg Press",
-      primaryMuscle: "legs" as const,
-      secondaryMuscles: ["core"] ,
-      equipment: "machine" as const,
-      description:
-        "A machine-based compound movement for the quadriceps, hamstrings, and glutes.",
-      instructions:
-        "1. Sit on the leg press machine and place feet shoulder-width on the platform.\n2. Push the platform away until legs are nearly extended (don't lock knees).\n3. Lower the platform until knees reach roughly a 90-degree angle.\n4. Press back to the starting position.",
+      name: "腿举",
+      primaryMuscle: "legs",
+      secondaryMuscles: JSON.stringify(["core"]),
+      equipment: "machine",
+      description: "器械腿举，锻炼股四头肌、腘绳肌和臀肌。",
+      instructions: "1. 坐在腿举机上，双脚与肩同宽放在踏板上。\n2. 推动踏板直到腿接近伸直（不锁膝）。\n3. 下放踏板至膝盖约90度角。\n4. 推回起始位置。",
     },
     {
-      name: "Romanian Deadlift",
-      primaryMuscle: "legs" as const,
-      secondaryMuscles: ["back"] ,
-      equipment: "barbell" as const,
-      description:
-        "A hip-hinge movement emphasizing hamstring and glute engagement.",
-      instructions:
-        "1. Stand holding a barbell at hip height with an overhand grip.\n2. Soften knees slightly, keep back flat, and hinge at the hips.\n3. Lower the bar along your shins until you feel a hamstring stretch.\n4. Drive hips forward to return to standing.",
+      name: "罗马尼亚硬拉",
+      primaryMuscle: "legs",
+      secondaryMuscles: JSON.stringify(["back"]),
+      equipment: "barbell",
+      description: "髋铰链动作，侧重训练腘绳肌和臀肌。",
+      instructions: "1. 站立，双手握住杠铃，杠铃在髋部高度。\n2. 膝盖微屈，保持背部挺直，髋部后推。\n3. 沿腿部下放杠铃，直到感到腘绳肌有明显拉伸感。\n4. 髋部前推恢复站立。",
     },
     {
-      name: "Lateral Raise",
-      primaryMuscle: "shoulders" as const,
-      secondaryMuscles: [] ,
-      equipment: "dumbbell" as const,
-      description:
-        "An isolation exercise for the medial deltoids.",
-      instructions:
-        "1. Stand holding a dumbbell in each hand at your sides.\n2. With a slight elbow bend, raise the dumbbells out to the sides until they reach shoulder height.\n3. Lower with control. Avoid using momentum.",
+      name: "侧平举",
+      primaryMuscle: "shoulders",
+      secondaryMuscles: JSON.stringify([]),
+      equipment: "dumbbell",
+      description: "孤立训练中三角肌。",
+      instructions: "1. 站立，双手各持哑铃放在身体两侧。\n2. 肘部微屈，将哑铃向两侧举起至肩部高度。\n3. 控制下放。避免借力。",
     },
     {
-      name: "Plank",
-      primaryMuscle: "core" as const,
-      secondaryMuscles: [] ,
-      equipment: "bodyweight" as const,
-      description:
-        "An isometric core exercise that builds endurance in the abdominals and lower back.",
-      instructions:
-        "1. Assume a forearm plank position — elbows under shoulders, body in a straight line from head to heels.\n2. Brace your core and glutes.\n3. Hold the position, breathing steadily. Do not let hips sag or pike.",
+      name: "平板支撑",
+      primaryMuscle: "core",
+      secondaryMuscles: JSON.stringify([]),
+      equipment: "bodyweight",
+      description: "等长核心训练，增强腹肌和下背部的耐力。",
+      instructions: "1. 从肘板支撑开始——肘部在肩下方，身体从头部到脚跟呈一条直线。\n2. 收紧核心和臀肌。\n3. 保持姿势，均匀呼吸。不要让臀部下沉或抬高。",
     },
     {
-      name: "Face Pull",
-      primaryMuscle: "shoulders" as const,
-      secondaryMuscles: ["back"] ,
-      equipment: "cable" as const,
-      description:
-        "A cable exercise targeting the rear delts and upper back, great for shoulder health.",
-      instructions:
-        "1. Set a cable pulley at roughly face height and attach a rope.\n2. Grip the rope with both hands, palms facing each other.\n3. Pull the rope toward your face, separating the ends and squeezing shoulder blades.\n4. Return with control.",
+      name: "面拉",
+      primaryMuscle: "shoulders",
+      secondaryMuscles: JSON.stringify(["back"]),
+      equipment: "cable",
+      description: "针对后束和上背的绳索动作，对肩膀健康非常有益。",
+      instructions: "1. 将绳索滑轮设置在约面部高度，安装绳索手柄。\n2. 双手握住绳索，掌心相对。\n3. 将绳索拉向面部，双手分开，收缩肩胛骨。\n4. 控制还原。",
     },
     {
-      name: "Dumbbell Lunges",
-      primaryMuscle: "legs" as const,
-      secondaryMuscles: ["core"] ,
-      equipment: "dumbbell" as const,
-      description:
-        "A unilateral lower-body movement that builds quad, glute, and stabiliser strength.",
-      instructions:
-        "1. Stand holding a dumbbell in each hand at your sides.\n2. Step forward with one leg and lower your back knee toward the floor.\n3. Both knees should reach roughly 90 degrees.\n4. Push through the front heel to return to standing.\n5. Alternate legs each rep.",
+      name: "哑铃箭步蹲",
+      primaryMuscle: "legs",
+      secondaryMuscles: JSON.stringify(["core"]),
+      equipment: "dumbbell",
+      description: "单侧下肢训练，增强股四头肌、臀肌和稳定性。",
+      instructions: "1. 站立，双手各持哑铃放在身体两侧。\n2. 向前迈出一步，下蹲至前后膝盖均呈90度角。\n3. 通过前脚后跟发力返回起始位置。\n4. 交替腿部。",
     },
     {
-      name: "Lat Pulldown",
-      primaryMuscle: "back" as const,
-      secondaryMuscles: ["arms"] ,
-      equipment: "machine" as const,
-      description:
-        "A vertical pulling machine exercise that targets the latissimus dorsi.",
-      instructions:
-        "1. Sit at a lat pulldown station and adjust the knee pad.\n2. Grip the bar wider than shoulder-width with an overhand grip.\n3. Lean back slightly, pull the bar down to your upper chest.\n4. Squeeze lats, then return bar with control to full arm extension.",
+      name: "高位下拉",
+      primaryMuscle: "back",
+      secondaryMuscles: JSON.stringify(["arms"]),
+      equipment: "cable",
+      description: "垂直拉类器械动作，增加背阔肌宽度。",
+      instructions: "1. 坐在高位下拉器上，调整腿部固定垫。\n2. 握距比肩宽，正手握杆。\n3. 微向后倾，将杆拉至上胸口。\n4. 收缩背阔肌，然后控制杆回到全臂伸展位置。",
     },
   ];
 
-  // Upsert exercises by name
+  // Create system user for templates
+  await prisma.user.upsert({
+    where: { id: "system" },
+    update: {},
+    create: { id: "system", email: "system@fitlog.local", name: "System", passwordHash: "" },
+  });
+
   const exerciseMap: Record<string, string> = {};
   for (const ex of exerciseData) {
     const slug = ex.name.replace(/\s+/g, "-").toLowerCase();
@@ -176,7 +148,7 @@ async function main() {
         id: slug,
         name: ex.name,
         primaryMuscle: ex.primaryMuscle,
-        secondaryMuscles: ex.secondaryMuscles as Muscle[],
+        secondaryMuscles: ex.secondaryMuscles,
         equipment: ex.equipment,
         description: ex.description,
         instructions: ex.instructions,
@@ -187,215 +159,82 @@ async function main() {
     console.log(`  Exercise: ${ex.name}`);
   }
 
-  // ── Plan Templates ─────────────────────────────────────────────────
-  const templateDefinitions = [
+  const templates = [
     {
-      name: "Push Pull Legs",
-      description:
-        "A 6-day split alternating push, pull, and leg days for balanced hypertrophy.",
+      name: "推拉腿分化",
+      description: "6天训练分化：推日、拉日、腿日各两次。",
       days: [
-        {
-          dayOfWeek: 1,
-          exercises: [
-            { name: "Bench Press", order: 1 },
-            { name: "Overhead Press", order: 2 },
-            { name: "Tricep Pushdown", order: 3 },
-            { name: "Lateral Raise", order: 4 },
-          ],
-        },
-        {
-          dayOfWeek: 2,
-          exercises: [
-            { name: "Barbell Row", order: 1 },
-            { name: "Pull-Up", order: 2 },
-            { name: "Dumbbell Curl", order: 3 },
-            { name: "Face Pull", order: 4 },
-          ],
-        },
-        {
-          dayOfWeek: 3,
-          exercises: [
-            { name: "Barbell Squat", order: 1 },
-            { name: "Romanian Deadlift", order: 2 },
-            { name: "Leg Press", order: 3 },
-            { name: "Dumbbell Lunges", order: 4 },
-            { name: "Plank", order: 5 },
-          ],
-        },
-        {
-          dayOfWeek: 4,
-          exercises: [
-            { name: "Bench Press", order: 1 },
-            { name: "Overhead Press", order: 2 },
-            { name: "Tricep Pushdown", order: 3 },
-            { name: "Lateral Raise", order: 4 },
-          ],
-        },
-        {
-          dayOfWeek: 5,
-          exercises: [
-            { name: "Deadlift", order: 1 },
-            { name: "Barbell Row", order: 2 },
-            { name: "Pull-Up", order: 3 },
-            { name: "Lat Pulldown", order: 4 },
-          ],
-        },
-        {
-          dayOfWeek: 6,
-          exercises: [
-            { name: "Barbell Squat", order: 1 },
-            { name: "Romanian Deadlift", order: 2 },
-            { name: "Leg Press", order: 3 },
-            { name: "Dumbbell Lunges", order: 4 },
-            { name: "Plank", order: 5 },
-          ],
-        },
+        { day: 1, exercises: ["卧推", "实力举", "绳索下压", "侧平举"] },
+        { day: 2, exercises: ["硬拉", "杠铃划船", "引体向上", "面拉", "哑铃弯举"] },
+        { day: 3, exercises: ["深蹲", "腿举", "罗马尼亚硬拉", "哑铃箭步蹲", "平板支撑"] },
+        { day: 4, exercises: ["卧推", "实力举", "绳索下压", "侧平举"] },
+        { day: 5, exercises: ["硬拉", "杠铃划船", "高位下拉", "面拉", "哑铃弯举"] },
+        { day: 6, exercises: ["深蹲", "腿举", "罗马尼亚硬拉", "哑铃箭步蹲", "平板支撑"] },
       ],
     },
     {
-      name: "Upper Lower Split",
-      description:
-        "A 4-day split alternating upper and lower body workouts for strength and hypertrophy.",
+      name: "上下肢分化",
+      description: "4天训练分化：上肢、下肢各两次。",
       days: [
-        {
-          dayOfWeek: 1,
-          exercises: [
-            { name: "Bench Press", order: 1 },
-            { name: "Barbell Row", order: 2 },
-            { name: "Overhead Press", order: 3 },
-            { name: "Pull-Up", order: 4 },
-            { name: "Lateral Raise", order: 5 },
-            { name: "Tricep Pushdown", order: 6 },
-          ],
-        },
-        {
-          dayOfWeek: 2,
-          exercises: [
-            { name: "Barbell Squat", order: 1 },
-            { name: "Romanian Deadlift", order: 2 },
-            { name: "Leg Press", order: 3 },
-            { name: "Dumbbell Lunges", order: 4 },
-            { name: "Plank", order: 5 },
-          ],
-        },
-        {
-          dayOfWeek: 3,
-          exercises: [
-            { name: "Bench Press", order: 1 },
-            { name: "Barbell Row", order: 2 },
-            { name: "Overhead Press", order: 3 },
-            { name: "Face Pull", order: 4 },
-            { name: "Dumbbell Curl", order: 5 },
-          ],
-        },
-        {
-          dayOfWeek: 4,
-          exercises: [
-            { name: "Deadlift", order: 1 },
-            { name: "Barbell Squat", order: 2 },
-            { name: "Leg Press", order: 3 },
-            { name: "Romanian Deadlift", order: 4 },
-            { name: "Plank", order: 5 },
-          ],
-        },
+        { day: 1, exercises: ["卧推", "杠铃划船", "实力举", "引体向上", "绳索下压", "哑铃弯举"] },
+        { day: 2, exercises: ["深蹲", "罗马尼亚硬拉", "腿举", "哑铃箭步蹲", "平板支撑"] },
+        { day: 3, exercises: ["卧推", "杠铃划船", "实力举", "高位下拉", "侧平举", "面拉"] },
+        { day: 4, exercises: ["深蹲", "硬拉", "腿举", "罗马尼亚硬拉", "平板支撑"] },
       ],
     },
     {
-      name: "Full Body 3x",
-      description:
-        "A 3-day full-body program ideal for beginners or those with limited time.",
+      name: "全身训练3次/周",
+      description: "每周3天，每天全身训练。",
       days: [
-        {
-          dayOfWeek: 1,
-          exercises: [
-            { name: "Barbell Squat", order: 1 },
-            { name: "Bench Press", order: 2 },
-            { name: "Barbell Row", order: 3 },
-            { name: "Overhead Press", order: 4 },
-            { name: "Plank", order: 5 },
-          ],
-        },
-        {
-          dayOfWeek: 3,
-          exercises: [
-            { name: "Deadlift", order: 1 },
-            { name: "Pull-Up", order: 2 },
-            { name: "Overhead Press", order: 3 },
-            { name: "Dumbbell Lunges", order: 4 },
-            { name: "Dumbbell Curl", order: 5 },
-          ],
-        },
-        {
-          dayOfWeek: 5,
-          exercises: [
-            { name: "Barbell Squat", order: 1 },
-            { name: "Bench Press", order: 2 },
-            { name: "Lat Pulldown", order: 3 },
-            { name: "Lateral Raise", order: 4 },
-            { name: "Plank", order: 5 },
-          ],
-        },
+        { day: 1, exercises: ["深蹲", "卧推", "杠铃划船", "实力举", "平板支撑"] },
+        { day: 3, exercises: ["硬拉", "实力举", "引体向上", "哑铃箭步蹲", "面拉"] },
+        { day: 5, exercises: ["深蹲", "卧推", "杠铃划船", "罗马尼亚硬拉", "绳索下压", "哑铃弯举"] },
       ],
     },
   ];
 
-  const systemUserId = "system";
-
-  // Ensure system user exists for templates
-  await prisma.user.upsert({
-    where: { id: systemUserId },
-    update: {},
-    create: {
-      id: systemUserId,
-      email: "system@fitness.app",
-      name: "System",
-      passwordHash: "__system__",
-    },
-  });
-
-  for (const template of templateDefinitions) {
+  console.log("Seeding plan templates...");
+  for (const tmpl of templates) {
+    const planId = `template-${tmpl.name.replace(/\s+/g, "-").toLowerCase()}`;
     const plan = await prisma.trainingPlan.upsert({
-      where: { id: `template-${template.name.replace(/\s+/g, "-").toLowerCase()}` },
-      update: {},
+      where: { id: planId },
+      update: { name: tmpl.name, description: tmpl.description },
       create: {
-        name: template.name,
-        description: template.description,
+        id: planId,
+        name: tmpl.name,
+        description: tmpl.description,
         isTemplate: true,
-        userId: systemUserId,
+        userId: "system",
       },
     });
 
-    // Remove existing plan exercises for this template before re-creating
     await prisma.planExercise.deleteMany({ where: { planId: plan.id } });
-
-    for (const day of template.days) {
-      for (const ex of day.exercises) {
-        const exerciseId = exerciseMap[ex.name];
-        const targetReps = ex.name === "Plank" ? "60s" : "8-12";
+    for (const day of tmpl.days) {
+      for (let i = 0; i < day.exercises.length; i++) {
+        const exerciseId = exerciseMap[day.exercises[i]];
+        if (!exerciseId) {
+          console.warn(`  WARNING: exercise "${day.exercises[i]}" not found, skipping`);
+          continue;
+        }
         await prisma.planExercise.create({
           data: {
             planId: plan.id,
             exerciseId,
             weekNumber: 1,
-            dayOfWeek: day.dayOfWeek,
-            order: ex.order,
+            dayOfWeek: day.day,
+            order: i,
             targetSets: 3,
-            targetReps,
+            targetReps: day.exercises[i] === "平板支撑" ? "60s" : "8-12",
           },
         });
       }
     }
-    console.log(`  Template: ${template.name}`);
+    console.log(`  Plan: ${tmpl.name}`);
   }
 
-  console.log("Seeding complete.");
+  console.log("Seed complete.");
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .then(async () => { await prisma.$disconnect(); })
+  .catch(async (e) => { console.error(e); await prisma.$disconnect(); process.exit(1); });
