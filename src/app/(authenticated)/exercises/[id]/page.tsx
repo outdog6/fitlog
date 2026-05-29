@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
+import { ExerciseActions } from "@/components/exercise-actions";
 
 const muscleColors: Record<string, string> = {
   chest: "bg-red-500/20 text-red-400",
@@ -65,11 +66,10 @@ export default async function ExerciseDetailPage({
         </Button>
       </Link>
 
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">
-          {exercise.name}
-        </h1>
-        <div className="flex gap-2 mt-3">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold text-foreground">{exercise.name}</h1>
+          <div className="flex gap-2 mt-3">
           <span
             className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
               muscleColors[exercise.primaryMuscle] || "bg-muted text-muted-foreground"
@@ -85,6 +85,8 @@ export default async function ExerciseDetailPage({
             {equipmentLabels[exercise.equipment] || exercise.equipment}
           </span>
         </div>
+        </div>
+        <ExerciseActions exerciseId={exercise.id} />
       </div>
 
       {exercise.imageUrl && (

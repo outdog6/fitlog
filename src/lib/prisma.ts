@@ -1,19 +1,11 @@
 import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
-function createPrismaClient(): PrismaClient {
-  const url = process.env.DATABASE_URL || "";
+const adapter = new PrismaLibSql({ url: "file:dev.db" });
 
-  if (url.startsWith("postgresql://") || url.startsWith("postgres://")) {
-    const { PrismaPg } = require("@prisma/adapter-pg") as typeof import("@prisma/adapter-pg");
-    return new PrismaClient({ adapter: new PrismaPg(url) });
-  }
-
-  const { PrismaLibSql } = require("@prisma/adapter-libsql") as typeof import("@prisma/adapter-libsql");
-  return new PrismaClient({ adapter: new PrismaLibSql({ url: url || "file:dev.db" }) });
-}
-
-export const prisma = globalForPrisma.prisma || createPrismaClient();
+export const prisma =
+  globalForPrisma.prisma || new PrismaClient({ adapter });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
