@@ -4,7 +4,8 @@ import { auth } from "@/lib/auth";
 import { StatsCards } from "@/components/stats-cards";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Play } from "lucide-react";
+import { Play, Trash2 } from "lucide-react";
+import { deleteWorkoutSession } from "./actions";
 
 function getMonday(): Date {
   const now = new Date();
@@ -158,25 +159,34 @@ export default async function DashboardPage() {
                 day: "numeric",
               });
               return (
-                <Link key={session.id} href={`/workout/${session.id}`}>
-                  <Card className="hover:bg-muted/50 transition-colors">
-                    <CardContent className="py-4 flex items-center justify-between">
-                      <div>
-                        <p className="font-medium text-foreground">
-                          {session.plan?.name ?? "自由训练"}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {dateStr}
-                        </p>
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {session.duration != null
-                          ? `${session.duration} min`
-                          : "—"}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                <div key={session.id} className="flex items-center gap-2">
+                  <Link href={`/workout/${session.id}`} className="flex-1">
+                    <Card className="hover:bg-muted/50 transition-colors">
+                      <CardContent className="py-4 flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-foreground">
+                            {session.plan?.name ?? "自由训练"}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {dateStr}
+                          </p>
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {session.duration != null
+                            ? `${session.duration} min`
+                            : "—"}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                  <form action={deleteWorkoutSession.bind(null, session.id)}>
+                    <Button type="submit" variant="ghost" size="icon"
+                      className="text-muted-foreground hover:text-destructive shrink-0"
+                      title="删除此记录">
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </form>
+                </div>
               );
             })}
           </div>
