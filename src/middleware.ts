@@ -12,9 +12,9 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // Unauthenticated users: redirect to login (unless already there)
+  // Unauthenticated users: allow landing page and login, redirect elsewhere
   if (!req.auth) {
-    if (pathname !== "/login") {
+    if (pathname !== "/login" && pathname !== "/") {
       return NextResponse.redirect(new URL("/login", req.url));
     }
     return NextResponse.next();
