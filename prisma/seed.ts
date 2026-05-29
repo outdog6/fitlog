@@ -163,10 +163,12 @@ async function main() {
   // Upsert exercises by name
   const exerciseMap: Record<string, string> = {};
   for (const ex of exerciseData) {
+    const slug = ex.name.replace(/\s+/g, "-").toLowerCase();
     const exercise = await prisma.exercise.upsert({
-      where: { id: ex.name.replace(/\s+/g, "-").toLowerCase() }, // placeholder; upsert needs a unique field
+      where: { id: slug },
       update: {},
       create: {
+        id: slug,
         name: ex.name,
         primaryMuscle: ex.primaryMuscle,
         secondaryMuscles: ex.secondaryMuscles,
