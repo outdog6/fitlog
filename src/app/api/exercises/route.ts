@@ -5,8 +5,16 @@ import { prisma } from "@/lib/prisma";
 const validMuscles = ["chest", "back", "legs", "shoulders", "arms", "core"];
 const validEquipment = ["barbell", "dumbbell", "cable", "bodyweight", "machine"];
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const singleId = searchParams.get("id");
+
+    if (singleId) {
+      const exercise = await prisma.exercise.findUnique({ where: { id: singleId } });
+      return NextResponse.json(exercise);
+    }
+
     const exercises = await prisma.exercise.findMany({
       orderBy: { name: "asc" },
       select: {
