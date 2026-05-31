@@ -1,0 +1,72 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  presets: [require("nativewind/preset")],
+  theme: {
+    extend: {
+      colors: {
+        // Apple-inspired dark fitness palette
+        ink: "#f5f5f7",
+        "ink-muted": "#98989d",
+        "ink-dim": "#6e6e73",
+        canvas: "#000000",
+        "canvas-alt": "#1d1d1f",
+        surface: "#272729",
+        "surface-variant": "#2a2a2c",
+        "surface-elevated": "#333336",
+        accent: "#34c759",
+        "accent-press": "#30b350",
+        danger: "#ff453a",
+        hairline: "#3a3a3c",
+        "pill-bg": "rgba(120,120,128,0.24)",
+      },
+      fontFamily: {
+        sans: [
+          "Inter",
+          "SF Pro Text",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "sans-serif",
+        ],
+        display: [
+          "Inter",
+          "SF Pro Display",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "sans-serif",
+        ],
+        mono: ["SF Mono", "JetBrains Mono", "ui-monospace", "monospace"],
+      },
+      fontSize: {
+        hero: ["34px", { lineHeight: "1.1", fontWeight: "600", letterSpacing: "-0.374px" }],
+        "display-lg": ["28px", { lineHeight: "1.14", fontWeight: "600", letterSpacing: "-0.28px" }],
+        headline: ["21px", { lineHeight: "1.19", fontWeight: "600", letterSpacing: "0.231px" }],
+        body: ["17px", { lineHeight: "1.47", fontWeight: "400", letterSpacing: "-0.374px" }],
+        "body-strong": ["17px", { lineHeight: "1.24", fontWeight: "600", letterSpacing: "-0.374px" }],
+        caption: ["14px", { lineHeight: "1.43", fontWeight: "400", letterSpacing: "-0.224px" }],
+        "caption-strong": ["14px", { lineHeight: "1.29", fontWeight: "600", letterSpacing: "-0.224px" }],
+        "fine-print": ["12px", { lineHeight: "1.0", fontWeight: "400", letterSpacing: "-0.12px" }],
+      },
+      borderRadius: {
+        none: "0px",
+        xs: "5px",
+        sm: "8px",
+        md: "11px",
+        lg: "18px",
+        pill: "9999px",
+      },
+      spacing: {
+        xxs: "4px",
+        xs: "8px",
+        sm: "12px",
+        md: "17px",
+        lg: "24px",
+        xl: "32px",
+        xxl: "48px",
+        section: "80px",
+      },
+    },
+  },
+};
