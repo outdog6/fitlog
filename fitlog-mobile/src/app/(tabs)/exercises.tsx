@@ -9,23 +9,7 @@ import {
 import { Search, X } from "lucide-react-native";
 import { db } from "@/db";
 import { exercises } from "@/db/schema";
-
-const MUSCLE_LABELS: Record<string, string> = {
-  chest: "胸",
-  back: "背",
-  legs: "腿",
-  shoulders: "肩",
-  arms: "手臂",
-  core: "核心",
-};
-
-const EQUIPMENT_LABELS: Record<string, string> = {
-  barbell: "杠铃",
-  dumbbell: "哑铃",
-  cable: "绳索",
-  machine: "器械",
-  bodyweight: "自重",
-};
+import { MUSCLE_LABELS, MUSCLE_COLORS, MUSCLE_BG, EQUIPMENT_LABELS } from "@/constants/theme";
 
 export default function ExercisesScreen() {
   const [search, setSearch] = useState("");
@@ -49,7 +33,8 @@ export default function ExercisesScreen() {
   return (
     <View className="flex-1 bg-canvas">
       <View className="px-xl pt-14 pb-md">
-        <Text className="text-ink font-display text-hero mb-sm">动作库</Text>
+          <Text className="text-ink font-display text-hero mb-xxs">动作库</Text>
+          <Text className="text-ink-dim text-fine-print">共 {all.length} 个动作</Text>
 
         {/* Search */}
         <View className="flex-row items-center bg-surface rounded-pill px-lg h-11">
@@ -119,27 +104,39 @@ export default function ExercisesScreen() {
             </Text>
           </View>
         ) : (
-          filtered.map((ex) => (
-            <View
-              key={ex.id}
-              className="flex-row items-center justify-between py-md border-b border-hairline"
-            >
-              <View className="flex-1">
-                <Text className="text-ink text-body-strong">{ex.name}</Text>
-                <View className="flex-row gap-sm mt-xxs">
-                  <Text className="text-ink-dim text-fine-print">
-                    {MUSCLE_LABELS[ex.primaryMuscle] ?? ex.primaryMuscle}
-                  </Text>
-                  <Text className="text-ink-dim text-fine-print">
-                    {EQUIPMENT_LABELS[ex.equipment] ?? ex.equipment}
-                  </Text>
+          filtered.map((ex) => {
+            const mColor = MUSCLE_COLORS[ex.primaryMuscle] ?? "#6e6e73";
+            const mBg = MUSCLE_BG[ex.primaryMuscle] ?? "rgba(152,152,157,0.1)";
+            return (
+              <View
+                key={ex.id}
+                className="flex-row items-center justify-between py-md border-b border-hairline"
+              >
+                <View className="flex-1">
+                  <Text className="text-ink text-body-strong">{ex.name}</Text>
+                  <View className="flex-row gap-xs mt-xxs">
+                    <View
+                      className="px-xs py-0.5 rounded-pill"
+                      style={{ backgroundColor: mBg }}
+                    >
+                      <Text className="text-fine-print" style={{ color: mColor }}>
+                        {MUSCLE_LABELS[ex.primaryMuscle] ?? ex.primaryMuscle}
+                      </Text>
+                    </View>
+                    <View
+                      className="px-xs py-0.5 rounded-pill"
+                      style={{ backgroundColor: "rgba(120,120,128,0.08)" }}
+                    >
+                      <Text className="text-ink-dim text-fine-print">
+                        {EQUIPMENT_LABELS[ex.equipment] ?? ex.equipment}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
+                <Text className="text-ink-dim text-caption">→</Text>
               </View>
-              <View className="w-8 h-8 rounded-pill bg-surface-variant items-center justify-center">
-                <Text className="text-ink-muted text-fine-print">→</Text>
-              </View>
-            </View>
-          ))
+            );
+          })
         )}
       </ScrollView>
     </View>
