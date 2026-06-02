@@ -7,13 +7,12 @@ import {
   FlatList,
   Alert,
 } from "react-native";
-import { Dumbbell, Plus, Timer, Trash2 } from "lucide-react-native";
+import { Dumbbell, Plus, Trash2 } from "lucide-react-native";
 import SetRow from "@/components/workout/SetRow";
 import RestTimerOverlay from "@/components/workout/RestTimerOverlay";
 import { getOrCreateLocalUser } from "@/lib/auth";
 import { db } from "@/db";
-import { exercises, workoutSessions, workoutSets } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { workoutSessions, workoutSets } from "@/db/schema";
 
 type SetData = {
   weight: number;
@@ -242,14 +241,14 @@ export default function WorkoutScreen() {
               {/* Muscle filter */}
               <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-md">
                 {["全部", "胸", "背", "腿", "肩", "手臂"].map((label, i) => (
-                  <TouchableOpacity
+                  <View
                     key={label}
                     className={`mr-xs px-md py-1.5 rounded-pill ${i === 0 ? "bg-accent" : "bg-surface"}`}
                   >
                     <Text className={`text-caption-strong ${i === 0 ? "text-canvas" : "text-ink-muted"}`}>
                       {label}
                     </Text>
-                  </TouchableOpacity>
+                  </View>
                 ))}
               </ScrollView>
 
@@ -292,6 +291,8 @@ export default function WorkoutScreen() {
                       setSlots([]);
                       setIsStarted(false);
                       setElapsed(0);
+                      setActiveExerciseIdx(0);
+                      setShowExercisePicker(false);
                     },
                   },
                 ]);
@@ -315,7 +316,7 @@ export default function WorkoutScreen() {
                 <TouchableOpacity
                   key={slot.exerciseId}
                   onPress={() => setActiveExerciseIdx(idx)}
-                  className={`mr-xs px-2.5 py-0 rounded-pill ${
+                  className={`mr-xs px-2.5 rounded-pill ${
                     isActive ? "bg-accent" : "bg-surface"
                   }`}
                 >
