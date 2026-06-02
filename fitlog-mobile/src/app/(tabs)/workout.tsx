@@ -181,112 +181,127 @@ export default function WorkoutScreen() {
 
   return (
     <View className="flex-1 bg-canvas">
-      {/* Header */}
-      <View className="px-xl pt-14 pb-md flex-row justify-between items-center">
-        <View>
-          <Text className="text-ink font-display text-hero">训练</Text>
-          {isStarted && (
-            <Text className="text-ink-muted text-caption font-mono mt-xxs">
-              {formatTime(elapsed)}
-            </Text>
-          )}
-        </View>
-        {slots.length > 0 && (
-          <TouchableOpacity
-            onPress={() => {
-              Alert.alert("结束训练", "确定要结束当前训练吗？", [
-                { text: "取消", style: "cancel" },
-                {
-                  text: "结束",
-                  onPress: () => {
-                    setSlots([]);
-                    setIsStarted(false);
-                    setElapsed(0);
-                  },
-                },
-              ]);
-            }}
-            className="p-xs"
-          >
-            <Trash2 color="#ff453a" size={20} />
-          </TouchableOpacity>
-        )}
-      </View>
 
       {slots.length === 0 ? (
         <View className="flex-1 px-xl">
-          {/* Quick Start CTA */}
-          <TouchableOpacity
-            onPress={() => setShowExercisePicker(true)}
-            className="bg-accent py-md px-lg rounded-pill items-center mb-lg active:scale-95"
-            activeOpacity={0.8}
-          >
-            <View className="flex-row items-center gap-xs">
-              <Dumbbell color="#000000" size={20} />
-              <View>
-                <Text className="text-canvas text-body-strong">
-                  快速开始
-                </Text>
-                <Text className="text-canvas/70 text-fine-print">
-                  选择动作，立即开始记录
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
+          {/* Big play button */}
+          <View className="items-center mt-xxl mb-lg">
+            <TouchableOpacity
+              onPress={() => setShowExercisePicker(true)}
+              className="w-20 h-20 rounded-full bg-accent items-center justify-center mb-lg active:scale-95"
+              activeOpacity={0.8}
+            >
+              <Dumbbell color="#000000" size={28} />
+            </TouchableOpacity>
+            <Text className="text-ink text-body-strong mb-xxs">
+              点击添加第一个训练动作
+            </Text>
+            <Text className="text-ink-dim text-fine-print">
+              选择下方常用动作或浏览全部
+            </Text>
+          </View>
 
+          {/* Quick pick */}
+          <Text className="text-ink-dim text-fine-print uppercase mb-sm"
+            style={{ letterSpacing: 1.5 }}>
+            常用动作
+          </Text>
+          <View className="flex-row flex-wrap gap-xs mb-lg">
+            {allExercises.slice(0, 6).map((ex) => (
+              <TouchableOpacity
+                key={ex.id}
+                onPress={() => addExercise(ex)}
+                className="px-md py-sm bg-surface rounded-pill active:scale-95"
+                activeOpacity={0.7}
+              >
+                <Text className="text-ink text-caption">{ex.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <View className="items-center">
+            <TouchableOpacity onPress={() => setShowExercisePicker(true)}>
+              <Text className="text-accent text-caption-strong">浏览全部动作 →</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Bottom sheet picker */}
           {showExercisePicker && (
-            <View className="bg-surface rounded-lg p-lg mb-lg">
-              <Text className="text-ink text-body-strong mb-md">
-                选择训练动作
-              </Text>
-              <View className="flex-row flex-wrap gap-xs">
+            <View
+              className="absolute bottom-0 left-0 right-0 bg-canvas-alt rounded-t-2xl px-xl pt-md pb-xxl z-10"
+              style={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+            >
+              <View className="w-8 h-1 bg-hairline rounded-pill self-center mb-lg" />
+              <Text className="text-ink text-body-strong mb-md">选择训练动作</Text>
+
+              {/* Search placeholder */}
+              <View className="flex-row items-center bg-surface rounded-lg px-lg h-11 mb-md">
+                <Text className="text-ink-dim text-caption">搜索动作...</Text>
+              </View>
+
+              {/* Muscle filter */}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-md">
+                {["全部", "胸", "背", "腿", "肩", "手臂"].map((label, i) => (
+                  <TouchableOpacity
+                    key={label}
+                    className={`mr-xs px-md py-1.5 rounded-pill ${i === 0 ? "bg-accent" : "bg-surface"}`}
+                  >
+                    <Text className={`text-caption-strong ${i === 0 ? "text-canvas" : "text-ink-muted"}`}>
+                      {label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+
+              <ScrollView className="max-h-56">
                 {allExercises.map((ex) => (
                   <TouchableOpacity
                     key={ex.id}
                     onPress={() => addExercise(ex)}
-                    className="px-md py-sm bg-surface-variant rounded-pill active:scale-95"
-                    activeOpacity={0.7}
+                    className="flex-row justify-between items-center py-md border-b border-hairline"
                   >
                     <Text className="text-ink text-caption">{ex.name}</Text>
+                    <Text className="text-ink-muted text-fine-print">添加 +</Text>
                   </TouchableOpacity>
                 ))}
-              </View>
-              <TouchableOpacity
-                onPress={() => setShowExercisePicker(false)}
-                className="mt-md py-xs"
-              >
-                <Text className="text-ink-muted text-caption text-center">
-                  取消
-                </Text>
+              </ScrollView>
+
+              <TouchableOpacity onPress={() => setShowExercisePicker(false)} className="mt-lg py-xs">
+                <Text className="text-ink-muted text-caption text-center">取消</Text>
               </TouchableOpacity>
             </View>
           )}
-
-          <ScrollView
-            className="flex-1"
-            contentContainerStyle={{ paddingBottom: 100 }}
-          >
-            <Text className="text-ink text-caption-strong mb-sm mt-lg">
-              可选动作 ({allExercises.length})
-            </Text>
-            <View className="flex-row flex-wrap gap-xs">
-              {allExercises.map((ex) => (
-                <TouchableOpacity
-                  key={ex.id}
-                  onPress={() => addExercise(ex)}
-                  className="px-md py-sm bg-surface rounded-pill active:scale-95"
-                  activeOpacity={0.7}
-                >
-                  <Text className="text-ink-muted text-fine-print">
-                    {ex.name}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
         </View>
       ) : (
         <View className="flex-1">
+          {/* Compact header */}
+          <View className="px-xl pt-14 pb-sm flex-row justify-between items-center">
+            <View>
+              <Text className="text-ink-dim text-fine-print">训练中</Text>
+              <Text className="text-accent font-display text-display-lg font-mono">
+                {formatTime(elapsed)}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                Alert.alert("结束训练", "确定要结束当前训练吗？", [
+                  { text: "取消", style: "cancel" },
+                  {
+                    text: "结束",
+                    onPress: () => {
+                      setSlots([]);
+                      setIsStarted(false);
+                      setElapsed(0);
+                    },
+                  },
+                ]);
+              }}
+              className="w-9 h-9 rounded-full bg-surface items-center justify-center"
+            >
+              <Trash2 color="#ff453a" size={16} />
+            </TouchableOpacity>
+          </View>
+
           {/* Exercise tabs */}
           <ScrollView
             horizontal
@@ -348,64 +363,53 @@ export default function WorkoutScreen() {
         </View>
       )}
 
-      {/* FAB: add exercise */}
+      {/* Bottom bar: finish + add */}
       {slots.length > 0 && (
-        <TouchableOpacity
-          onPress={() => setShowExercisePicker(!showExercisePicker)}
-          className="absolute bottom-28 right-xl w-11 h-11 bg-surface-elevated rounded-full items-center justify-center"
-        >
-          <Plus color="#34c759" size={22} />
-        </TouchableOpacity>
-      )}
-
-      {/* Inline exercise picker */}
-      {slots.length > 0 && showExercisePicker && (
-        <View className="absolute bottom-48 right-xl left-xl bg-surface rounded-lg p-lg border border-hairline">
-          <Text className="text-ink text-caption-strong mb-sm">添加动作</Text>
-          <ScrollView className="max-h-48">
-            <View className="flex-row flex-wrap gap-xs">
-              {allExercises
-                .filter((ex) => !slots.find((s) => s.exerciseId === ex.id))
-                .map((ex) => (
-                  <TouchableOpacity
-                    key={ex.id}
-                    onPress={() => addExercise(ex)}
-                    className="px-md py-sm bg-surface-variant rounded-pill active:scale-95"
-                  >
-                    <Text className="text-ink-muted text-fine-print">
-                      {ex.name}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-            </View>
-          </ScrollView>
-        </View>
-      )}
-
-      {/* Finish button */}
-      {slots.length > 0 && (
-        <View className="absolute bottom-4 left-xl right-xl z-10">
+        <View className="absolute bottom-4 left-xl right-xl flex-row gap-sm">
           <TouchableOpacity
             onPress={finishWorkout}
-            className="bg-accent py-md rounded-pill items-center active:scale-95"
+            className="flex-1 bg-accent py-md rounded-pill items-center active:scale-95"
             activeOpacity={0.8}
           >
             <Text className="text-canvas text-body-strong">
               完成训练
               {(() => {
                 const done = slots.reduce(
-                  (sum, s) =>
-                    sum + s.sets.filter((x) => x.status === "done").length,
-                  0,
+                  (sum, s) => sum + s.sets.filter((x) => x.status === "done").length, 0
                 );
-                const total = slots.reduce(
-                  (sum, s) => sum + s.sets.length,
-                  0,
-                );
-                return total > 0 ? ` (${done}/${total})` : "";
+                const total = slots.reduce((sum, s) => sum + s.sets.length, 0);
+                return total > 0 ? ` ${done}/${total}` : "";
               })()}
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setShowExercisePicker(!showExercisePicker)}
+            className="w-12 h-12 rounded-full bg-surface items-center justify-center"
+          >
+            <Plus color="#34c759" size={22} />
+          </TouchableOpacity>
+
+          {/* Inline picker for adding exercise during workout */}
+          {showExercisePicker && (
+            <View className="absolute bottom-16 right-0 left-0 bg-canvas-alt rounded-lg p-lg border border-hairline">
+              <Text className="text-ink text-caption-strong mb-sm">添加动作</Text>
+              <ScrollView className="max-h-48">
+                <View className="flex-row flex-wrap gap-xs">
+                  {allExercises
+                    .filter((ex) => !slots.find((s) => s.exerciseId === ex.id))
+                    .map((ex) => (
+                      <TouchableOpacity
+                        key={ex.id}
+                        onPress={() => addExercise(ex)}
+                        className="px-md py-sm bg-surface rounded-pill active:scale-95"
+                      >
+                        <Text className="text-ink-muted text-fine-print">{ex.name}</Text>
+                      </TouchableOpacity>
+                    ))}
+                </View>
+              </ScrollView>
+            </View>
+          )}
         </View>
       )}
 
