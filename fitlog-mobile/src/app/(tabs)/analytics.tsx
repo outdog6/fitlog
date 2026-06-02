@@ -1,8 +1,6 @@
 import { View, Text, ScrollView } from "react-native";
 import { useState, useEffect } from "react";
 import { db } from "@/db";
-import { workoutSessions, workoutSets } from "@/db/schema";
-import { eq } from "drizzle-orm";
 import { MUSCLE_COLORS, MUSCLE_LABELS } from "@/constants/theme";
 
 function getWeekStart(date: Date) {
@@ -43,10 +41,13 @@ export default function AnalyticsScreen() {
         setLoaded(true);
         return;
       }
-      setHasData(true);
 
       const now = new Date();
       const twelveWeeksAgo = new Date(now.getTime() - 12 * 7 * 86400000);
+
+      // Batch fetch ALL sets and ALL exercises in 2 queries
+      const allSets = await db.query.workoutSets.findMany();
+      const allExercises = await db.query.exercises.findMany();
 
       let total = 0;
       const weekVolumes: Map<string, number> = new Map();
@@ -56,9 +57,7 @@ export default function AnalyticsScreen() {
         const d = new Date(s.date);
         if (d < twelveWeeksAgo) continue;
 
-        const sets = await db.query.workoutSets.findMany({
-          where: eq(workoutSets.sessionId, s.id),
-        });
+        const sets = allSets.filter((rs) => rs.sessionId === s.id);
         for (const rs of sets) {
           const vol = (rs.weight || 0) * (rs.reps || 0);
           total += vol;
@@ -66,18 +65,15 @@ export default function AnalyticsScreen() {
           const weekKey = getWeekStart(d).toISOString().slice(0, 10);
           weekVolumes.set(weekKey, (weekVolumes.get(weekKey) || 0) + vol);
 
-          try {
-            const ex = await db.query.exercises.findFirst({
-              where: (fields: any, _ops: any) => eq(fields.id, rs.exerciseId),
-            });
-            if (ex) {
-              const m = (ex as any).primaryMuscle;
-              muscleVolumes.set(m, (muscleVolumes.get(m) || 0) + vol);
-            }
-          } catch {}
+          const ex = allExercises.find((e) => e.id === rs.exerciseId);
+          if (ex) {
+            const m = ex.primaryMuscle;
+            muscleVolumes.set(m, (muscleVolumes.get(m) || 0) + vol);
+          }
         }
       }
 
+      setHasData(true);
       setTotalVolume(total);
 
       const weekArr: WeekData[] = [];
@@ -99,7 +95,9 @@ export default function AnalyticsScreen() {
           percent: Math.round((v / maxMuscleVol) * 100),
         }));
       setMuscles(muscleArr);
-    } catch {}
+    } catch (err) {
+      console.error("Analytics load failed:", err);
+    }
     setLoaded(true);
   }
 
@@ -155,7 +153,7 @@ export default function AnalyticsScreen() {
                     className="w-full bg-accent rounded-sm"
                     style={{
                       height: `${h}%`,
-                      opacity: 0.4 + (i / weeks.length) * 0.6,
+                      opacity: 0.4 + ((i + 1) / weeks.length) * 0.6,
                     }}
                   />
                   <Text className="text-ink-dim text-fine-print mt-xxs">
