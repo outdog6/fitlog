@@ -14,6 +14,7 @@ import RestTimerOverlay from "@/components/workout/RestTimerOverlay";
 import { getOrCreateLocalUser } from "@/lib/auth";
 import { db } from "@/db";
 import { workoutSessions, workoutSets } from "@/db/schema";
+import { router } from "expo-router";
 
 type SetData = {
   weight: number;
@@ -179,6 +180,15 @@ export default function WorkoutScreen() {
 
       await db.insert(workoutSets).values(allSets);
       Alert.alert("完成", `记录了 ${totalSets} 组训练`, [
+        {
+          text: "查看详情",
+          onPress: () => {
+            setSlots([]);
+            setIsStarted(false);
+            setElapsed(0);
+            router.push({ pathname: "/workout/[id]", params: { id: session.id } });
+          },
+        },
         { text: "好的", onPress: () => setSlots([]) },
       ]);
       setIsStarted(false);

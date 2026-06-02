@@ -212,30 +212,33 @@ export default function DashboardScreen() {
           </View>
         ) : (
           stats.recentSessions.map((s) => (
-            <View
+            <Link
               key={s.id}
-              className="mx-xl mb-xs bg-surface rounded-lg px-lg py-xl flex-row items-center gap-md"
+              href={{ pathname: "/workout/[id]", params: { id: s.id } }}
+              asChild
             >
-              <View className="w-10 h-10 rounded-lg bg-accent/15 items-center justify-center">
-                <Dumbbell color="#34c759" size={16} />
-              </View>
-              <View className="flex-1">
-                <Text className="text-ink text-caption-strong" numberOfLines={1}>
-                  {s.exerciseNames.length > 0
-                    ? s.exerciseNames.join(" · ")
-                    : "训练记录"}
-                </Text>
-                <View className="flex-row items-center gap-xs mt-xxs">
-                  <Text className="text-ink-dim text-fine-print">
-                    {formatDate(s.date)}
-                  </Text>
-                  <Text className="text-ink-dim text-fine-print">·</Text>
-                  <Text className="text-ink-dim text-fine-print">
-                    {formatDuration(s.duration) ?? "--"}
-                  </Text>
+              <TouchableOpacity className="mx-xl mb-xs bg-surface rounded-lg px-lg py-xl flex-row items-center gap-md">
+                <View className="w-10 h-10 rounded-lg bg-accent/15 items-center justify-center">
+                  <Dumbbell color="#34c759" size={16} />
                 </View>
-              </View>
-            </View>
+                <View className="flex-1">
+                  <Text className="text-ink text-caption-strong" numberOfLines={1}>
+                    {s.exerciseNames.length > 0
+                      ? s.exerciseNames.join(" · ")
+                      : "训练记录"}
+                  </Text>
+                  <View className="flex-row items-center gap-xs mt-xxs">
+                    <Text className="text-ink-dim text-fine-print">
+                      {formatDate(s.date)}
+                    </Text>
+                    <Text className="text-ink-dim text-fine-print">·</Text>
+                    <Text className="text-ink-dim text-fine-print">
+                      {formatDuration(s.duration) ?? "--"}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </Link>
           ))
         )}
       </View>

@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { Plus } from "lucide-react-native";
 import { useState, useCallback } from "react";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, Link } from "expo-router";
 import { db } from "@/db";
 
 interface PlanItem {
@@ -35,21 +35,28 @@ export default function PlansScreen() {
           <Text className="text-ink font-display text-hero">训练计划</Text>
           <Text className="text-ink-dim text-fine-print mt-xxs">周期化训练管理</Text>
         </View>
-        <TouchableOpacity
-          className="bg-accent w-11 h-11 rounded-full items-center justify-center active:scale-95"
-          onPress={() => Alert.alert("提示", "创建训练计划功能即将上线")}
-        >
-          <Plus color="#000000" size={20} />
-        </TouchableOpacity>
+        <Link href="/plan/new" asChild>
+          <TouchableOpacity className="bg-accent w-11 h-11 rounded-full items-center justify-center active:scale-95">
+            <Plus color="#000000" size={20} />
+          </TouchableOpacity>
+        </Link>
       </View>
 
       {/* 模板库 */}
       <View className="px-xl mb-lg">
         <View className="flex-row justify-between items-end mb-md">
           <Text className="text-ink text-body-strong">模板库</Text>
-          <TouchableOpacity onPress={() => Alert.alert("提示", "从模板创建计划功能即将上线")}>
-            <Text className="text-accent text-caption">从模板创建 →</Text>
-          </TouchableOpacity>
+          {templates.length > 0 ? (
+            <Link href={{ pathname: "/plan/new", params: { template: templates[0].id } }} asChild>
+              <TouchableOpacity>
+                <Text className="text-accent text-caption">从模板创建 →</Text>
+              </TouchableOpacity>
+            </Link>
+          ) : (
+            <TouchableOpacity disabled>
+              <Text className="text-ink-muted text-caption">从模板创建 →</Text>
+            </TouchableOpacity>
+          )}
         </View>
         {templates.length === 0 ? (
           <View className="bg-surface rounded-lg py-xxl items-center">
@@ -61,23 +68,26 @@ export default function PlansScreen() {
               const colors = ["#FF453A", "#007AFF", "#34C759"];
               const color = colors[i % 3];
               return (
-                <View
+                <Link
                   key={t.id}
-                  className="mr-sm bg-surface rounded-lg px-lg py-xl w-36"
+                  href={{ pathname: "/plan/new", params: { template: t.id } }}
+                  asChild
                 >
-                  <View
-                    className="w-8 h-8 rounded-lg items-center justify-center mb-md"
-                    style={{ backgroundColor: `${color}26` }}
-                  >
-                    <Text style={{ color }} className="text-caption-strong">
-                      {i + 1}
+                  <TouchableOpacity className="mr-sm bg-surface rounded-lg px-lg py-xl w-36">
+                    <View
+                      className="w-8 h-8 rounded-lg items-center justify-center mb-md"
+                      style={{ backgroundColor: `${color}26` }}
+                    >
+                      <Text style={{ color }} className="text-caption-strong">
+                        {i + 1}
+                      </Text>
+                    </View>
+                    <Text className="text-ink text-caption-strong">{t.name}</Text>
+                    <Text className="text-ink-dim text-fine-print mt-xxs">
+                      {t.description ?? ""}
                     </Text>
-                  </View>
-                  <Text className="text-ink text-caption-strong">{t.name}</Text>
-                  <Text className="text-ink-dim text-fine-print mt-xxs">
-                    {t.description ?? ""}
-                  </Text>
-                </View>
+                  </TouchableOpacity>
+                </Link>
               );
             })}
           </ScrollView>
@@ -96,7 +106,11 @@ export default function PlansScreen() {
           </View>
         ) : (
           myPlans.map((p) => (
-            <View key={p.id} className="mb-xs bg-surface rounded-lg px-lg py-xl">
+            <TouchableOpacity
+              key={p.id}
+              onPress={() => Alert.alert("计划信息", `名称: ${p.name}\n描述: ${p.description ?? "无"}`)}
+              className="mb-xs bg-surface rounded-lg px-lg py-xl"
+            >
               <View className="flex-row justify-between items-start">
                 <View className="flex-1">
                   <Text className="text-ink text-body-strong">{p.name}</Text>
@@ -112,7 +126,7 @@ export default function PlansScreen() {
                 </View>
                 <Text className="text-ink-dim text-caption">→</Text>
               </View>
-            </View>
+            </TouchableOpacity>
           ))
         )}
       </View>
