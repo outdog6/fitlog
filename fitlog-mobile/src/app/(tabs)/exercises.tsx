@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import {
   View,
   Text,
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import { Search, X } from "lucide-react-native";
+import { Search, X, Plus } from "lucide-react-native";
+import { useFocusEffect } from "expo-router";
 import { db } from "@/db";
 import { MUSCLE_LABELS, MUSCLE_COLORS, MUSCLE_BG, EQUIPMENT_LABELS } from "@/constants/theme";
 
@@ -16,10 +18,22 @@ export default function ExercisesScreen() {
   const [all, setAll] = useState<
     { id: string; name: string; primaryMuscle: string; equipment: string }[]
   >([]);
+  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    db.query.exercises.findMany().then((list) => setAll(list as any));
+  const loadExercises = useCallback(() => {
+    db.query.exercises.findMany().then((list) => {
+      setAll(list as any);
+      setLoaded(true);
+    }).catch(() => {
+      setLoaded(true);
+    });
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadExercises();
+    }, [loadExercises])
+  );
 
   const filtered = all.filter((ex) => {
     if (filter && ex.primaryMuscle !== filter) return false;
@@ -32,8 +46,18 @@ export default function ExercisesScreen() {
   return (
     <View className="flex-1 bg-canvas">
       <View className="px-xl pt-14 pb-md">
-          <Text className="text-ink font-display text-hero mb-xxs">动作库</Text>
-          <Text className="text-ink-dim text-fine-print">共 {all.length} 个动作</Text>
+        <View className="flex-row justify-between items-center mb-sm">
+          <View>
+            <Text className="text-ink font-display text-hero mb-xxs">动作库</Text>
+            <Text className="text-ink-dim text-fine-print">共 {all.length} 个动作</Text>
+          </View>
+          <TouchableOpacity
+            className="bg-accent w-11 h-11 rounded-full items-center justify-center active:scale-95"
+            onPress={() => Alert.alert("提示", "创建自定义动作功能即将上线")}
+          >
+            <Plus color="#000000" size={20} />
+          </TouchableOpacity>
+        </View>
 
         {/* Search */}
         <View className="flex-row items-center bg-surface rounded-pill px-lg h-11">
@@ -96,10 +120,14 @@ export default function ExercisesScreen() {
 
       {/* Exercise list */}
       <ScrollView className="flex-1 px-xl" contentContainerStyle={{ paddingBottom: 100 }}>
-        {filtered.length === 0 ? (
+        {!loaded ? (
+          <View className="items-center pt-xxl">
+            <Text className="text-ink-muted text-body">加载中...</Text>
+          </View>
+        ) : filtered.length === 0 ? (
           <View className="items-center pt-xxl">
             <Text className="text-ink-muted text-body">
-              {all.length === 0 ? "加载中..." : "没有匹配的动作"}
+              {all.length === 0 ? "暂无动作" : "没有匹配的动作"}
             </Text>
           </View>
         ) : (

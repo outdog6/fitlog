@@ -1,6 +1,7 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { Plus } from "lucide-react-native";
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
+import { useFocusEffect } from "expo-router";
 import { db } from "@/db";
 
 interface PlanItem {
@@ -14,12 +15,18 @@ export default function PlansScreen() {
   const [templates, setTemplates] = useState<PlanItem[]>([]);
   const [myPlans, setMyPlans] = useState<PlanItem[]>([]);
 
-  useEffect(() => {
+  const loadPlans = useCallback(() => {
     db.query.trainingPlans.findMany().then((list) => {
       setTemplates(list.filter((p) => p.isTemplate));
       setMyPlans(list.filter((p) => !p.isTemplate));
     });
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadPlans();
+    }, [loadPlans])
+  );
 
   return (
     <ScrollView className="flex-1 bg-canvas">
@@ -28,16 +35,21 @@ export default function PlansScreen() {
           <Text className="text-ink font-display text-hero">训练计划</Text>
           <Text className="text-ink-dim text-fine-print mt-xxs">周期化训练管理</Text>
         </View>
-        <View className="bg-accent w-11 h-11 rounded-full items-center justify-center">
+        <TouchableOpacity
+          className="bg-accent w-11 h-11 rounded-full items-center justify-center active:scale-95"
+          onPress={() => Alert.alert("提示", "创建训练计划功能即将上线")}
+        >
           <Plus color="#000000" size={20} />
-        </View>
+        </TouchableOpacity>
       </View>
 
       {/* 模板库 */}
       <View className="px-xl mb-lg">
         <View className="flex-row justify-between items-end mb-md">
           <Text className="text-ink text-body-strong">模板库</Text>
-          <Text className="text-accent text-caption">从模板创建 →</Text>
+          <TouchableOpacity onPress={() => Alert.alert("提示", "从模板创建计划功能即将上线")}>
+            <Text className="text-accent text-caption">从模板创建 →</Text>
+          </TouchableOpacity>
         </View>
         {templates.length === 0 ? (
           <View className="bg-surface rounded-lg py-xxl items-center">
