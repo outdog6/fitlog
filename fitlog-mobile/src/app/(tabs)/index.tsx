@@ -8,6 +8,7 @@ import {
 } from "lucide-react-native";
 import { Link } from "expo-router";
 import { useState, useEffect } from "react";
+import { MUSCLE_COLORS, MUSCLE_BG } from "@/constants/theme";
 import { db } from "@/db";
 import { workoutSessions, workoutSets, exercises } from "@/db/schema";
 import { eq, sql, desc } from "drizzle-orm";
@@ -128,134 +129,122 @@ export default function DashboardScreen() {
 
   return (
     <ScrollView className="flex-1 bg-canvas">
-      {/* ─── Hero ─── */}
-      <View className="pt-20 pb-section px-xl bg-canvas">
-        <Text className="text-accent text-caption-strong mb-sm tracking-wider uppercase">
-          力量训练
-        </Text>
-        <Text className="text-ink font-display text-hero mb-xxs">
-          今天练点什么？
-        </Text>
-        <Text className="text-ink-muted text-body">
-          本周已训练 {stats.weekCount} 次 · 继续保持
-        </Text>
+      {/* ─── 顶部品牌区 ─── */}
+      <View className="pt-16 px-xl pb-sm flex-row justify-between items-center">
+        <View>
+          <Text className="text-ink font-display text-display-lg">
+            FitLog
+          </Text>
+          <Text className="text-ink-dim text-fine-print mt-xxs">
+            {new Date().toLocaleDateString("zh-CN", {
+              month: "long",
+              day: "numeric",
+              weekday: "long",
+            })}
+          </Text>
+        </View>
+        <View className="w-11 h-11 rounded-full bg-surface items-center justify-center">
+          <Dumbbell color="#34c759" size={20} />
+        </View>
       </View>
 
-      {/* ─── CTA Tile ─── */}
-      <View className="mx-xl mb-xxl">
-        <Link href="/(tabs)/workout" asChild>
-          <TouchableOpacity
-            className="bg-accent rounded-lg overflow-hidden active:scale-[0.98]"
-            activeOpacity={1}
-          >
-            <View className="px-xl py-xxl flex-row items-end justify-between">
-              <View>
-                <Text className="text-canvas/80 text-caption mb-xxs">
-                  快速开始
-                </Text>
-                <Text className="text-canvas font-display text-display-lg">
-                  开始训练
-                </Text>
-              </View>
-              <View className="bg-canvas/20 w-11 h-11 rounded-pill items-center justify-center">
-                <Dumbbell color="#000000" size={20} />
-              </View>
+      {/* ─── 今日训练 Hero Card ─── */}
+      <View className="px-xl pb-sm">
+        <View
+          className="bg-[#0D1A0D] rounded-lg px-lg py-xl"
+          style={{ borderColor: "rgba(52,199,89,0.2)", borderWidth: 1 }}
+        >
+          <View className="flex-row justify-between items-start">
+            <View className="flex-1 mr-md">
+              <Text className="text-accent text-fine-print font-semibold uppercase mb-xs" style={{ letterSpacing: 2 }}>
+                {stats.planName ?? "今日训练"}
+              </Text>
+              <Text className="text-ink font-display text-headline mb-xxs">
+                {stats.todayPlan ?? "开始你的训练"}
+              </Text>
+              <Text className="text-ink-dim text-caption">
+                胸 + 肩 + 肱三头肌
+              </Text>
             </View>
-          </TouchableOpacity>
-        </Link>
+            <Link href="/(tabs)/workout" asChild>
+              <TouchableOpacity
+                className="w-11 h-11 rounded-full bg-accent items-center justify-center active:scale-95"
+                activeOpacity={0.8}
+              >
+                <Dumbbell color="#000000" size={18} />
+              </TouchableOpacity>
+            </Link>
+          </View>
+        </View>
       </View>
 
-      {/* ─── Stats ─── */}
-      <View className="mb-xxl">
-        <Text className="px-xl text-ink-dim text-fine-print mb-md uppercase tracking-wider">
-          本周概览
-        </Text>
-        <View className="px-xl flex-row gap-sm mb-sm">
-          <View className="flex-1 bg-surface rounded-lg px-lg py-xl">
-            <View className="w-8 h-8 rounded-pill bg-accent/20 items-center justify-center mb-md">
-              <TrendingUp color="#34c759" size={16} />
-            </View>
-            <Text className="text-ink font-display text-display-lg mb-xxs">
+      {/* ─── 统计三卡片 ─── */}
+      <View className="px-xl mb-lg">
+        <View className="flex-row gap-xs">
+          <View className="flex-1 bg-surface rounded-lg px-lg py-xl items-center">
+            <Text className="text-accent font-display text-display-lg">
               {stats.weekCount}
             </Text>
-            <Text className="text-ink-muted text-caption">本周完成</Text>
+            <Text className="text-ink-dim text-fine-print mt-xxs">本周训练</Text>
           </View>
-          <View className="flex-1 bg-surface rounded-lg px-lg py-xl">
-            <View className="w-8 h-8 rounded-pill bg-accent/20 items-center justify-center mb-md">
-              <Calendar color="#34c759" size={16} />
-            </View>
-            <Text className="text-ink font-display text-display-lg mb-xxs">
+          <View className="flex-1 bg-surface rounded-lg px-lg py-xl items-center">
+            <Text className="text-ink font-display text-display-lg">
               {stats.totalCount}
             </Text>
-            <Text className="text-ink-muted text-caption">总训练次数</Text>
+            <Text className="text-ink-dim text-fine-print mt-xxs">总训练次数</Text>
           </View>
-        </View>
-        <View className="px-xl flex-row gap-sm">
-          <View className="flex-1 bg-surface rounded-lg px-lg py-xl">
-            <View className="w-8 h-8 rounded-pill bg-accent/20 items-center justify-center mb-md">
-              <Target color="#34c759" size={16} />
-            </View>
-            <Text className="text-ink font-display text-display-lg mb-xxs">
-              {stats.planName ?? "--"}
+          <View className="flex-1 bg-surface rounded-lg px-lg py-xl items-center">
+            <Text className="text-[#FF9500] font-display text-display-lg">
+              3
             </Text>
-            <Text className="text-ink-muted text-caption">当前计划</Text>
-          </View>
-          <View className="flex-1 bg-surface rounded-lg px-lg py-xl">
-            <View className="w-8 h-8 rounded-pill bg-accent/20 items-center justify-center mb-md">
-              <Calendar color="#34c759" size={16} />
-            </View>
-            <Text className="text-ink font-display text-display-lg mb-xxs">
-              {stats.todayPlan ?? "--"}
-            </Text>
-            <Text className="text-ink-muted text-caption">今日安排</Text>
+            <Text className="text-ink-dim text-fine-print mt-xxs">连续周</Text>
           </View>
         </View>
       </View>
 
-      {/* ─── Recent Sessions ─── */}
+      {/* ─── 最近训练 ─── */}
       <View className="pb-section">
-        <View className="px-xl flex-row justify-between items-end mb-md">
-          <Text className="text-ink-dim text-fine-print uppercase tracking-wider">
-            最近训练
-          </Text>
+        <View className="px-xl flex-row justify-between items-center mb-md">
+          <Text className="text-ink text-body-strong">最近训练</Text>
+          <Text className="text-accent text-caption">查看全部 →</Text>
         </View>
 
         {stats.recentSessions.length === 0 ? (
-          <View className="mx-xl bg-surface rounded-lg overflow-hidden">
-            <View className="px-xl py-xxl items-center">
-              <View className="w-16 h-16 rounded-full bg-surface-variant items-center justify-center mb-lg">
-                <Dumbbell color="#6e6e73" size={28} />
-              </View>
-              <Text className="text-ink-muted text-body mb-xxs">
-                还没有训练记录
-              </Text>
-              <Text className="text-ink-dim text-fine-print text-center">
-                点击上方「开始训练」记录你的第一次训练
-              </Text>
+          <View className="mx-xl bg-surface rounded-lg px-xl py-xxl items-center">
+            <View className="w-16 h-16 rounded-full bg-surface-variant items-center justify-center mb-lg">
+              <Dumbbell color="#6e6e73" size={28} />
             </View>
-            <View className="h-0.5 bg-accent/50" />
+            <Text className="text-ink-muted text-body mb-xxs">
+              还没有训练记录
+            </Text>
+            <Text className="text-ink-dim text-fine-print text-center">
+              点击上方按钮开始你的第一次训练
+            </Text>
           </View>
         ) : (
           stats.recentSessions.map((s) => (
             <View
               key={s.id}
-              className="mx-xl mb-xs bg-surface rounded-lg px-lg py-xl"
+              className="mx-xl mb-xs bg-surface rounded-lg px-lg py-xl flex-row items-center gap-md"
             >
-              <View className="flex-row justify-between items-start mb-sm">
-                <Text className="text-ink text-body-strong">
+              <View className="w-10 h-10 rounded-lg bg-accent/15 items-center justify-center">
+                <Dumbbell color="#34c759" size={16} />
+              </View>
+              <View className="flex-1">
+                <Text className="text-ink text-caption-strong" numberOfLines={1}>
                   {s.exerciseNames.length > 0
                     ? s.exerciseNames.join(" · ")
                     : "训练记录"}
                 </Text>
-                <Text className="text-ink-dim text-fine-print">
-                  {formatDate(s.date)}
-                </Text>
-              </View>
-              <View className="flex-row items-center gap-xs">
-                <Clock color="#6e6e73" size={12} />
-                <Text className="text-ink-muted text-fine-print">
-                  {formatDuration(s.duration) ?? "--"}
-                </Text>
+                <View className="flex-row items-center gap-xs mt-xxs">
+                  <Text className="text-ink-dim text-fine-print">
+                    {formatDate(s.date)}
+                  </Text>
+                  <Text className="text-ink-dim text-fine-print">·</Text>
+                  <Text className="text-ink-dim text-fine-print">
+                    {formatDuration(s.duration) ?? "--"}
+                  </Text>
+                </View>
               </View>
             </View>
           ))
