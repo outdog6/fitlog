@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { Search, X } from "lucide-react-native";
 import { db } from "@/db";
-import { exercises } from "@/db/schema";
 import { MUSCLE_LABELS, MUSCLE_COLORS, MUSCLE_BG, EQUIPMENT_LABELS } from "@/constants/theme";
 
 export default function ExercisesScreen() {
@@ -123,10 +122,7 @@ export default function ExercisesScreen() {
                         {MUSCLE_LABELS[ex.primaryMuscle] ?? ex.primaryMuscle}
                       </Text>
                     </View>
-                    <View
-                      className="px-xs py-0.5 rounded-pill"
-                      style={{ backgroundColor: "rgba(120,120,128,0.08)" }}
-                    >
+                    <View className="px-xs py-0.5 rounded-pill bg-pill-bg">
                       <Text className="text-ink-dim text-fine-print">
                         {EQUIPMENT_LABELS[ex.equipment] ?? ex.equipment}
                       </Text>
