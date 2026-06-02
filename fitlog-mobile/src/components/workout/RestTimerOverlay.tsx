@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Modal } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { X } from "lucide-react-native";
 
 interface Props {
@@ -20,6 +20,9 @@ export default function RestTimerOverlay({
   const [seconds, setSeconds] = useState(defaultSeconds);
   const [target, setTarget] = useState(defaultSeconds);
 
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
   useEffect(() => {
     if (!visible) {
       setSeconds(defaultSeconds);
@@ -30,14 +33,14 @@ export default function RestTimerOverlay({
       setSeconds((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          onComplete();
+          onCompleteRef.current();
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [visible, defaultSeconds, onComplete]);
+  }, [visible, defaultSeconds]);
 
   const addTime = () => {
     setTarget((t) => t + 30);
@@ -51,7 +54,7 @@ export default function RestTimerOverlay({
   const display = `${mins}:${secs.toString().padStart(2, "0")}`;
 
   return (
-    <Modal visible={visible} animationType="fade" transparent>
+    <Modal visible={visible} animationType="fade" transparent onRequestClose={onSkip}>
       <View
         className="flex-1 items-center justify-center px-xxl"
         style={{ backgroundColor: "rgba(0,0,0,0.97)" }}
@@ -89,7 +92,7 @@ export default function RestTimerOverlay({
               borderBottomColor: "transparent",
               borderLeftColor: "transparent",
               transform: [{ rotate: `${-45 + progress * 360}deg` }],
-              opacity: progress > 0 ? 1 : 0,
+              opacity: 1,
             }}
           />
           <View className="items-center">
