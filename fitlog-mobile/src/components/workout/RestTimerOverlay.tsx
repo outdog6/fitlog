@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Modal } from "react-native";
 import { useEffect, useState } from "react";
-import { X, Timer } from "lucide-react-native";
+import { X } from "lucide-react-native";
 
 interface Props {
   visible: boolean;
@@ -44,9 +44,7 @@ export default function RestTimerOverlay({
     setSeconds((s) => s + 30);
   };
 
-  const progress = target > 0 ? seconds / target : 0;
-  const barColor =
-    progress > 0.66 ? "bg-accent" : progress > 0.33 ? "bg-[#ff9f0a]" : "bg-danger";
+  const progress = target > 0 ? 1 - seconds / target : 0;
 
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
@@ -54,8 +52,10 @@ export default function RestTimerOverlay({
 
   return (
     <Modal visible={visible} animationType="fade" transparent>
-      <View className="flex-1 bg-canvas/95 items-center justify-center px-xxl">
-        {/* Close */}
+      <View
+        className="flex-1 items-center justify-center px-xxl"
+        style={{ backgroundColor: "rgba(0,0,0,0.97)" }}
+      >
         <TouchableOpacity
           onPress={onSkip}
           className="absolute top-14 right-xl w-11 h-11 items-center justify-center"
@@ -63,36 +63,50 @@ export default function RestTimerOverlay({
           <X color="#6e6e73" size={22} />
         </TouchableOpacity>
 
-        <Timer color="#34c759" size={44} />
-        <Text className="text-ink-muted text-caption mt-sm">组间休息</Text>
+        {nextExercise ? (
+          <Text className="text-ink-dim text-caption mb-sm">
+            下一动作：{nextExercise}
+          </Text>
+        ) : null}
 
-        {/* Timer */}
-        <Text className="text-ink font-display text-6xl font-semibold mt-xl tracking-widest">
-          {display}
+        <Text
+          className="text-accent text-fine-print font-semibold uppercase mb-lg"
+          style={{ letterSpacing: 2 }}
+        >
+          组间休息
         </Text>
 
-        {/* Progress bar */}
-        <View className="w-64 h-1 bg-surface rounded-pill mt-xl overflow-hidden">
+        {/* Circular progress ring */}
+        <View className="w-40 h-40 rounded-full items-center justify-center mb-lg"
+          style={{ borderWidth: 4, borderColor: "#272729" }}
+        >
           <View
-            className={`h-full ${barColor} rounded-pill`}
-            style={{ width: `${Math.round(progress * 100)}%` }}
+            className="absolute inset-0 rounded-full"
+            style={{
+              borderWidth: 4,
+              borderTopColor: "#34c759",
+              borderRightColor: "#34c759",
+              borderBottomColor: "transparent",
+              borderLeftColor: "transparent",
+              transform: [{ rotate: `${-45 + progress * 360}deg` }],
+              opacity: progress > 0 ? 1 : 0,
+            }}
           />
+          <View className="items-center">
+            <Text className="text-ink font-display text-hero font-mono tracking-tight">
+              {display}
+            </Text>
+            <Text className="text-ink-dim text-fine-print mt-xxs">剩余</Text>
+          </View>
         </View>
 
-        {nextExercise && (
-          <Text className="text-ink-muted text-caption mt-lg">
-            下一个: {nextExercise}
-          </Text>
-        )}
-
-        {/* Actions */}
-        <View className="flex-row gap-md mt-xxl">
+        <View className="flex-row gap-md mt-lg">
           <TouchableOpacity
             onPress={addTime}
             className="px-xl py-md bg-surface rounded-pill active:scale-95"
             activeOpacity={0.7}
           >
-            <Text className="text-ink text-body-strong">+30s</Text>
+            <Text className="text-ink text-body-strong">+30秒</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={onSkip}
