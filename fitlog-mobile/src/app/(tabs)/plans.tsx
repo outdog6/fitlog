@@ -15,9 +15,9 @@ export default function PlansScreen() {
   const [myPlans, setMyPlans] = useState<PlanItem[]>([]);
 
   useEffect(() => {
-    db.query.trainingPlans.findMany().then((list: any[]) => {
-      setTemplates(list.filter((p: any) => p.isTemplate));
-      setMyPlans(list.filter((p: any) => !p.isTemplate));
+    db.query.trainingPlans.findMany().then((list) => {
+      setTemplates(list.filter((p) => p.isTemplate));
+      setMyPlans(list.filter((p) => !p.isTemplate));
     });
   }, []);
 
