@@ -38,9 +38,7 @@ export default function SetRow({
           <Check color="#000000" size={12} />
         </View>
         <Text className="text-ink-muted text-caption flex-1">
-          <Text className="text-ink-muted">{data.weight} kg</Text>
-          {"  x  "}
-          <Text className="text-ink-muted">{data.reps} 次</Text>
+          {data.weight} kg × {data.reps} 次
         </Text>
         {data.restAfter != null && data.restAfter > 0 && (
           <Text className="text-ink-dim text-fine-print">
@@ -68,7 +66,7 @@ export default function SetRow({
             <View className="flex-row items-center gap-sm">
               <TouchableOpacity
                 onPress={() => onWeightChange(data.weight - weightStep)}
-                className="w-7 h-7 rounded-full bg-surface items-center justify-center"
+                className="w-9 h-9 rounded-full bg-surface items-center justify-center"
               >
                 <Text className="text-ink-muted text-caption">−</Text>
               </TouchableOpacity>
@@ -77,7 +75,7 @@ export default function SetRow({
               </Text>
               <TouchableOpacity
                 onPress={() => onWeightChange(data.weight + weightStep)}
-                className="w-7 h-7 rounded-full bg-surface items-center justify-center"
+                className="w-9 h-9 rounded-full bg-surface items-center justify-center"
               >
                 <Text className="text-ink-muted text-caption">+</Text>
               </TouchableOpacity>
@@ -90,7 +88,7 @@ export default function SetRow({
             <View className="flex-row items-center gap-sm">
               <TouchableOpacity
                 onPress={() => onRepsChange(data.reps - 1)}
-                className="w-7 h-7 rounded-full bg-surface items-center justify-center"
+                className="w-9 h-9 rounded-full bg-surface items-center justify-center"
               >
                 <Text className="text-ink-muted text-caption">−</Text>
               </TouchableOpacity>
@@ -99,7 +97,7 @@ export default function SetRow({
               </Text>
               <TouchableOpacity
                 onPress={() => onRepsChange(data.reps + 1)}
-                className="w-7 h-7 rounded-full bg-surface items-center justify-center"
+                className="w-9 h-9 rounded-full bg-surface items-center justify-center"
               >
                 <Text className="text-ink-muted text-caption">+</Text>
               </TouchableOpacity>
