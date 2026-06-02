@@ -188,7 +188,7 @@ export default function DashboardScreen() {
           </View>
           <View className="flex-1 bg-surface rounded-lg px-lg py-xl items-center">
             <Text className="text-[#FF9500] font-display text-display-lg">
-              {stats.weekCount > 0 ? "--" : "--"}
+              --
             </Text>
             <Text className="text-ink-dim text-fine-print mt-xxs">连续周</Text>
           </View>
@@ -215,7 +215,7 @@ export default function DashboardScreen() {
               还没有训练记录
             </Text>
             <Text className="text-ink-dim text-fine-print text-center">
-              点击上方 Hero Card 按钮开始第一次训练
+              点击上方训练卡片按钮开始第一次训练
             </Text>
           </View>
         ) : (
