@@ -1,17 +1,10 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import {
-  Dumbbell,
-  TrendingUp,
-  Calendar,
-  Target,
-  Clock,
-} from "lucide-react-native";
+import { Dumbbell } from "lucide-react-native";
 import { Link } from "expo-router";
 import { useState, useEffect } from "react";
-import { MUSCLE_COLORS, MUSCLE_BG } from "@/constants/theme";
 import { db } from "@/db";
 import { workoutSessions, workoutSets, exercises } from "@/db/schema";
-import { eq, sql, desc } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 function getWeekStart() {
   const now = new Date();
@@ -163,7 +156,7 @@ export default function DashboardScreen() {
                 {stats.todayPlan ?? "开始你的训练"}
               </Text>
               <Text className="text-ink-dim text-caption">
-                胸 + 肩 + 肱三头肌
+                {stats.todayPlan ? "按计划执行" : "选择动作开始训练"}
               </Text>
             </View>
             <Link href="/(tabs)/workout" asChild>
@@ -195,7 +188,7 @@ export default function DashboardScreen() {
           </View>
           <View className="flex-1 bg-surface rounded-lg px-lg py-xl items-center">
             <Text className="text-[#FF9500] font-display text-display-lg">
-              3
+              {stats.weekCount > 0 ? "--" : "--"}
             </Text>
             <Text className="text-ink-dim text-fine-print mt-xxs">连续周</Text>
           </View>
@@ -206,7 +199,11 @@ export default function DashboardScreen() {
       <View className="pb-section">
         <View className="px-xl flex-row justify-between items-center mb-md">
           <Text className="text-ink text-body-strong">最近训练</Text>
-          <Text className="text-accent text-caption">查看全部 →</Text>
+          <Link href="/(tabs)/analytics" asChild>
+            <TouchableOpacity>
+              <Text className="text-accent text-caption">查看全部 →</Text>
+            </TouchableOpacity>
+          </Link>
         </View>
 
         {stats.recentSessions.length === 0 ? (
@@ -218,7 +215,7 @@ export default function DashboardScreen() {
               还没有训练记录
             </Text>
             <Text className="text-ink-dim text-fine-print text-center">
-              点击上方按钮开始你的第一次训练
+              点击上方 Hero Card 按钮开始第一次训练
             </Text>
           </View>
         ) : (
