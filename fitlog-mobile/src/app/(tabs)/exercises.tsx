@@ -10,19 +10,18 @@ import {
 import { Search, X, Plus } from "lucide-react-native";
 import { useFocusEffect, Link } from "expo-router";
 import { db } from "@/db";
+import type { Exercise } from "@/db/schema";
 import { MUSCLE_LABELS, MUSCLE_COLORS, MUSCLE_BG, EQUIPMENT_LABELS } from "@/constants/theme";
 
 export default function ExercisesScreen() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string | null>(null);
-  const [all, setAll] = useState<
-    { id: string; name: string; primaryMuscle: string; equipment: string }[]
-  >([]);
+  const [all, setAll] = useState<Pick<Exercise, "id" | "name" | "primaryMuscle" | "equipment">[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   const loadExercises = useCallback(() => {
     db.query.exercises.findMany().then((list) => {
-      setAll(list as any);
+      setAll(list);
       setLoaded(true);
     }).catch(() => {
       setLoaded(true);

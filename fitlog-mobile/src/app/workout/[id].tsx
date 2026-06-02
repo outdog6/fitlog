@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { ChevronLeft, Clock, Dumbbell } from "lucide-react-native";
 import { db } from "@/db";
-import { workoutSessions, workoutSets, exercises } from "@/db/schema";
+import { workoutSessions, workoutSets } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export default function WorkoutDetailScreen() {

@@ -69,14 +69,17 @@ export default function WorkoutScreen() {
   };
 
   const addExercise = (ex: { id: string; name: string }) => {
-    setSlots((prev) => [
-      ...prev,
-      {
-        exerciseId: ex.id,
-        exerciseName: ex.name,
-        sets: [{ weight: 20, reps: 10, status: "pending" }],
-      },
-    ]);
+    setSlots((prev) => {
+      if (prev.some((s) => s.exerciseId === ex.id)) return prev;
+      return [
+        ...prev,
+        {
+          exerciseId: ex.id,
+          exerciseName: ex.name,
+          sets: [{ weight: 20, reps: 10, status: "pending" }],
+        },
+      ];
+    });
     setShowExercisePicker(false);
     if (!isStarted) setIsStarted(true);
   };

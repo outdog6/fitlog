@@ -124,7 +124,7 @@ export default function PlansScreen() {
                     </Text>
                   ) : null}
                 </View>
-                <Text className="text-ink-dim text-caption">→</Text>
+                {/* Arrow removed — Alert is fine for now */}
               </View>
             </TouchableOpacity>
           ))

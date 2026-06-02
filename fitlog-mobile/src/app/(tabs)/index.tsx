@@ -3,7 +3,7 @@ import { Dumbbell } from "lucide-react-native";
 import { Link } from "expo-router";
 import { useState, useEffect } from "react";
 import { db } from "@/db";
-import { workoutSessions, workoutSets, exercises } from "@/db/schema";
+import { workoutSets } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getWeekStart } from "@/lib/date";
 
@@ -53,11 +53,9 @@ export default function DashboardScreen() {
         sessions.slice(0, 3).map(async (s: any) => {
           let exerciseIds: string[] = [];
           try {
-            const rawSets = (await (
-              db as any
-            ).select?.()
-              ?.from?.(workoutSets)
-              ?.where?.(eq(workoutSets.sessionId, s.id))) || [];
+            const rawSets = await db.query.workoutSets.findMany({
+              where: eq(workoutSets.sessionId, s.id),
+            });
             exerciseIds = [...new Set(rawSets.map((r: any) => r.exerciseId))] as string[];
           } catch {
             // Fallback: just show duration
