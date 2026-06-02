@@ -5,15 +5,7 @@ import { useState, useEffect } from "react";
 import { db } from "@/db";
 import { workoutSessions, workoutSets, exercises } from "@/db/schema";
 import { eq } from "drizzle-orm";
-
-function getWeekStart() {
-  const now = new Date();
-  const day = now.getDay();
-  const diff = now.getDate() - day + (day === 0 ? -6 : 1);
-  const monday = new Date(now.setDate(diff));
-  monday.setHours(0, 0, 0, 0);
-  return monday;
-}
+import { getWeekStart } from "@/lib/date";
 
 interface DashboardStats {
   weekCount: number;
@@ -51,7 +43,7 @@ export default function DashboardScreen() {
           new Date(b.date).getTime() - new Date(a.date).getTime(),
       );
 
-      const weekStart = getWeekStart();
+      const weekStart = getWeekStart(new Date());
       const weekCount = sessions.filter(
         (s: any) => new Date(s.date) >= weekStart,
       ).length;

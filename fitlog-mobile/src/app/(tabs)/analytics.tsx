@@ -2,15 +2,7 @@ import { View, Text, ScrollView } from "react-native";
 import { useState, useEffect } from "react";
 import { db } from "@/db";
 import { MUSCLE_COLORS, MUSCLE_LABELS } from "@/constants/theme";
-
-function getWeekStart(date: Date) {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  d.setDate(diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
+import { getWeekStart } from "@/lib/date";
 
 interface WeekData {
   label: string;
@@ -99,6 +91,10 @@ export default function AnalyticsScreen() {
       console.error("Analytics load failed:", err);
     }
     setLoaded(true);
+  }
+
+  if (!loaded) {
+    return <View className="flex-1 bg-canvas" />;
   }
 
   if (!hasData) {

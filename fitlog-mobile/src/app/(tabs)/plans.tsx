@@ -28,9 +28,9 @@ export default function PlansScreen() {
           <Text className="text-ink font-display text-hero">训练计划</Text>
           <Text className="text-ink-dim text-fine-print mt-xxs">周期化训练管理</Text>
         </View>
-        <TouchableOpacity className="bg-accent w-11 h-11 rounded-full items-center justify-center active:scale-95">
+        <View className="bg-accent w-11 h-11 rounded-full items-center justify-center">
           <Plus color="#000000" size={20} />
-        </TouchableOpacity>
+        </View>
       </View>
 
       {/* 模板库 */}
