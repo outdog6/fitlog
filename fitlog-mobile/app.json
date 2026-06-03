@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "fitlog-mobile",
+    "name": "FitLog",
     "slug": "fitlog-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -42,6 +42,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "2b694344-1c94-48d6-84c3-03fdae46f685"
+      }
+    },
+    "owner": "outdog"
   }
 }
