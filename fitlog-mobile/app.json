@@ -4,7 +4,7 @@
     "slug": "fitlog-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/Fitlog.png",
     "scheme": "fitlogmobile",
     "userInterfaceStyle": "dark",
     "ios": {
@@ -14,9 +14,9 @@
       "package": "com.fitlog.mobile",
       "adaptiveIcon": {
         "backgroundColor": "#000000",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/Fitlog-fg.png",
+        "backgroundImage": "./assets/images/Fitlog.png",
+        "monochromeImage": "./assets/images/Fitlog-fg.png"
       },
       "predictiveBackGestureEnabled": false
     },
