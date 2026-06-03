@@ -48,8 +48,8 @@ export default function CreateExerciseScreen() {
       Alert.alert("创建成功", "", [
         { text: "确定", onPress: () => router.back() },
       ]);
-    } catch {
-      Alert.alert("创建失败", "请稍后重试");
+    } catch (e: any) {
+      Alert.alert("创建失败", e?.message ?? "请稍后重试");
     } finally {
       setSaving(false);
     }
