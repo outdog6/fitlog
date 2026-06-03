@@ -10,8 +10,10 @@ import {
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
-import { db, trainingPlans, planExercises } from "@/db";
+import { db, expoDb } from "@/db";
+import { planExercises } from "@/db";
 import { eq } from "drizzle-orm";
+import { randomUUID } from "expo-crypto";
 import { getOrCreateLocalUser } from "@/lib/auth";
 
 export default function CreatePlanScreen() {
@@ -48,26 +50,22 @@ export default function CreatePlanScreen() {
 
     try {
       const user = await getOrCreateLocalUser();
+      const planId = randomUUID();
 
-      const [inserted] = await db.insert(trainingPlans).values({
-        name: name.trim(),
-        description: description.trim() || null,
-        isTemplate: false,
-        userId: user.id,
-      }).returning();
+      expoDb.runSync(
+        `INSERT INTO "TrainingPlan" (id, name, description, isTemplate, userId) VALUES (?, ?, ?, ?, ?)`,
+        [planId, name.trim(), description.trim() || null, 0, user.id]
+      );
 
       // Clone template exercises if any
-      if (templateExercises.length > 0 && inserted) {
-        const clonedExercises = templateExercises.map((pe) => ({
-          planId: inserted.id,
-          exerciseId: pe.exerciseId,
-          weekNumber: pe.weekNumber,
-          dayOfWeek: pe.dayOfWeek,
-          order: pe.order,
-          targetSets: pe.targetSets,
-          targetReps: pe.targetReps,
-        }));
-        await db.insert(planExercises).values(clonedExercises);
+      if (templateExercises.length > 0) {
+        for (const pe of templateExercises) {
+          const cloneId = randomUUID();
+          expoDb.runSync(
+            `INSERT INTO "PlanExercise" (id, planId, exerciseId, weekNumber, dayOfWeek, "order", targetSets, targetReps) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [cloneId, planId, pe.exerciseId, pe.weekNumber, pe.dayOfWeek, pe.order, pe.targetSets, pe.targetReps]
+          );
+        }
       }
 
       Alert.alert("创建成功", "", [

@@ -4,6 +4,7 @@ import { schema } from "./schema";
 
 const expoDb = openDatabaseSync("fitlog.db");
 export const db = drizzle(expoDb, { schema });
+export { expoDb };
 
 export { schema };
 export * from "./schema";

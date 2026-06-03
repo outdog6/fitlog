@@ -2,7 +2,8 @@ import { useState } from "react";
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from "react-native";
 import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
-import { db, exercises } from "@/db";
+import { expoDb } from "@/db";
+import { randomUUID } from "expo-crypto";
 import { MUSCLE_LABELS, EQUIPMENT_LABELS } from "@/constants/theme";
 
 const MUSCLES = ["chest", "back", "legs", "shoulders", "arms", "core"] as const;
@@ -33,15 +34,11 @@ export default function CreateExerciseScreen() {
     setSaving(true);
 
     try {
-      await db.insert(exercises).values({
-        name: name.trim(),
-        primaryMuscle,
-        secondaryMuscles: "[]",
-        equipment,
-        description: description.trim(),
-        instructions: instructions.trim(),
-        isPreset: false,
-      });
+      const id = randomUUID();
+      expoDb.runSync(
+        `INSERT INTO "Exercise" (id, name, primaryMuscle, secondaryMuscles, equipment, description, instructions, isPreset) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [id, name.trim(), primaryMuscle, "[]", equipment, description.trim(), instructions.trim(), 0]
+      );
       Alert.alert("创建成功", "", [
         { text: "确定", onPress: () => router.back() },
       ]);
