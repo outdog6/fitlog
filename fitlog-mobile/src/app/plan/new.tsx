@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
-import * as Crypto from "expo-crypto";
 import { db } from "@/db";
 import { trainingPlans, planExercises } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -50,20 +49,18 @@ export default function CreatePlanScreen() {
 
     try {
       const user = await getOrCreateLocalUser();
-      const planId = Crypto.randomUUID();
 
-      await db.insert(trainingPlans).values({
-        id: planId,
+      const [inserted] = await db.insert(trainingPlans).values({
         name: name.trim(),
         description: description.trim() || null,
         isTemplate: false,
         userId: user.id,
-      });
+      }).returning();
 
       // Clone template exercises if any
-      if (templateExercises.length > 0) {
+      if (templateExercises.length > 0 && inserted) {
         const clonedExercises = templateExercises.map((pe) => ({
-          planId,
+          planId: inserted.id,
           exerciseId: pe.exerciseId,
           weekNumber: pe.weekNumber,
           dayOfWeek: pe.dayOfWeek,
