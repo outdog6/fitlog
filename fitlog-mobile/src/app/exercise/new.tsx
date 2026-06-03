@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from "react-native";
 import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
+import * as Crypto from "expo-crypto";
 import { db } from "@/db";
 import { exercises } from "@/db/schema";
 import { MUSCLE_LABELS, EQUIPMENT_LABELS } from "@/constants/theme";
@@ -35,7 +36,7 @@ export default function CreateExerciseScreen() {
 
     try {
       await db.insert(exercises).values({
-        id: crypto.randomUUID(),
+        id: Crypto.randomUUID(),
         name: name.trim(),
         primaryMuscle,
         secondaryMuscles: "[]",
