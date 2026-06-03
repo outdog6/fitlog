@@ -35,8 +35,9 @@ export default function CreateExerciseScreen() {
 
     try {
       const id = randomUUID();
+      expoDb.execSync(`CREATE TABLE IF NOT EXISTS Exercise (id TEXT PRIMARY KEY, name TEXT NOT NULL, primaryMuscle TEXT NOT NULL, secondaryMuscles TEXT NOT NULL DEFAULT '[]', equipment TEXT NOT NULL, description TEXT DEFAULT '', instructions TEXT DEFAULT '', imageUrl TEXT, isPreset INTEGER NOT NULL DEFAULT 0, userId TEXT)`);
       expoDb.runSync(
-        `INSERT INTO "Exercise" (id, name, primaryMuscle, secondaryMuscles, equipment, description, instructions, isPreset) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO Exercise (id, name, primaryMuscle, secondaryMuscles, equipment, description, instructions, isPreset) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, name.trim(), primaryMuscle, "[]", equipment, description.trim(), instructions.trim(), 0]
       );
       Alert.alert("创建成功", "", [

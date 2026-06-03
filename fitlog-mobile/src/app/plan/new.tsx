@@ -52,13 +52,15 @@ export default function CreatePlanScreen() {
       const user = await getOrCreateLocalUser();
       const planId = randomUUID();
 
+      expoDb.execSync(`CREATE TABLE IF NOT EXISTS TrainingPlan (id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, isTemplate INTEGER NOT NULL DEFAULT 0, userId TEXT NOT NULL, createdAt INTEGER NOT NULL, updatedAt INTEGER NOT NULL)`);
       expoDb.runSync(
-        `INSERT INTO "TrainingPlan" (id, name, description, isTemplate, userId) VALUES (?, ?, ?, ?, ?)`,
-        [planId, name.trim(), description.trim() || null, 0, user.id]
+        `INSERT INTO TrainingPlan (id, name, description, isTemplate, userId, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [planId, name.trim(), description.trim() || null, 0, user.id, Date.now(), Date.now()]
       );
 
       // Clone template exercises if any
       if (templateExercises.length > 0) {
+        expoDb.execSync(`CREATE TABLE IF NOT EXISTS PlanExercise (id TEXT PRIMARY KEY, planId TEXT NOT NULL, exerciseId TEXT NOT NULL, weekNumber INTEGER NOT NULL, dayOfWeek INTEGER NOT NULL, "order" INTEGER NOT NULL, targetSets INTEGER NOT NULL, targetReps TEXT NOT NULL DEFAULT '8-12')`);
         for (const pe of templateExercises) {
           const cloneId = randomUUID();
           expoDb.runSync(
