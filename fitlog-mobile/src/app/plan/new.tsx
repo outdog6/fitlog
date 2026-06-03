@@ -10,8 +10,7 @@ import {
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
-import { db } from "@/db";
-import { trainingPlans, planExercises } from "@/db/schema";
+import { db, trainingPlans, planExercises } from "@/db";
 import { eq } from "drizzle-orm";
 import { getOrCreateLocalUser } from "@/lib/auth";
 

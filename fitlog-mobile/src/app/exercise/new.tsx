@@ -2,8 +2,7 @@ import { useState } from "react";
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from "react-native";
 import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
-import { db } from "@/db";
-import { exercises } from "@/db/schema";
+import { db, exercises } from "@/db";
 import { MUSCLE_LABELS, EQUIPMENT_LABELS } from "@/constants/theme";
 
 const MUSCLES = ["chest", "back", "legs", "shoulders", "arms", "core"] as const;
