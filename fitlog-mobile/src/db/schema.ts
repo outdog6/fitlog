@@ -1,11 +1,12 @@
 import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 import type { InferSelectModel, InferInsertModel } from "drizzle-orm";
+import { randomUUID } from "expo-crypto";
 
 // ─── Tables ───
 
 export const users = sqliteTable("User", {
-  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id: text("id").primaryKey().$defaultFn(() => randomUUID()),
   email: text("email").notNull().unique(),
   name: text("name"),
   passwordHash: text("passwordHash").notNull(),
@@ -15,7 +16,7 @@ export const users = sqliteTable("User", {
 });
 
 export const sessions = sqliteTable("Session", {
-  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id: text("id").primaryKey().$defaultFn(() => randomUUID()),
   sessionToken: text("sessionToken").notNull().unique(),
   userId: text("userId")
     .notNull()
@@ -24,7 +25,7 @@ export const sessions = sqliteTable("Session", {
 });
 
 export const exercises = sqliteTable("Exercise", {
-  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id: text("id").primaryKey().$defaultFn(() => randomUUID()),
   name: text("name").notNull(),
   primaryMuscle: text("primaryMuscle").notNull(),
   secondaryMuscles: text("secondaryMuscles").notNull().default("[]"),
@@ -37,7 +38,7 @@ export const exercises = sqliteTable("Exercise", {
 });
 
 export const trainingPlans = sqliteTable("TrainingPlan", {
-  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id: text("id").primaryKey().$defaultFn(() => randomUUID()),
   name: text("name").notNull(),
   description: text("description"),
   isTemplate: integer("isTemplate", { mode: "boolean" }).notNull().default(false),
@@ -53,7 +54,7 @@ export const trainingPlans = sqliteTable("TrainingPlan", {
 });
 
 export const planExercises = sqliteTable("PlanExercise", {
-  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id: text("id").primaryKey().$defaultFn(() => randomUUID()),
   planId: text("planId")
     .notNull()
     .references(() => trainingPlans.id, { onDelete: "cascade" }),
@@ -68,7 +69,7 @@ export const planExercises = sqliteTable("PlanExercise", {
 });
 
 export const workoutSessions = sqliteTable("WorkoutSession", {
-  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id: text("id").primaryKey().$defaultFn(() => randomUUID()),
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
@@ -81,7 +82,7 @@ export const workoutSessions = sqliteTable("WorkoutSession", {
 });
 
 export const workoutSets = sqliteTable("WorkoutSet", {
-  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id: text("id").primaryKey().$defaultFn(() => randomUUID()),
   sessionId: text("sessionId")
     .notNull()
     .references(() => workoutSessions.id, { onDelete: "cascade" }),
