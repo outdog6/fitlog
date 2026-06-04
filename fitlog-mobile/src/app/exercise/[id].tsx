@@ -86,7 +86,7 @@ export default function ExerciseDetailScreen() {
 
   return (
     <View className="flex-1 bg-canvas">
-      <Header />
+      <Header showEditButton={!exercise.isPreset} exerciseId={exercise.id} />
 
       <ScrollView
         className="flex-1 px-xl"
@@ -185,7 +185,13 @@ export default function ExerciseDetailScreen() {
   );
 }
 
-function Header() {
+function Header({
+  showEditButton = false,
+  exerciseId,
+}: {
+  showEditButton?: boolean;
+  exerciseId?: string;
+}) {
   return (
     <View className="px-xl pt-14 pb-md flex-row items-center gap-sm">
       <TouchableOpacity
@@ -195,6 +201,16 @@ function Header() {
         <ChevronLeft color="#34c759" size={22} />
       </TouchableOpacity>
       <Text className="text-ink font-display text-headline">动作详情</Text>
+      {showEditButton && exerciseId && (
+        <TouchableOpacity
+          onPress={() =>
+            router.push(`/exercise/edit?id=${exerciseId}`)
+          }
+          className="ml-auto px-md py-1.5 rounded-pill bg-accent"
+        >
+          <Text className="text-canvas text-caption-strong">编辑</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
