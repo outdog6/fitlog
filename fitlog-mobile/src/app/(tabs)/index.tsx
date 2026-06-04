@@ -1,9 +1,9 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { Dumbbell } from "lucide-react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useState, useEffect } from "react";
 import { db } from "@/db";
-import { workoutSets } from "@/db/schema";
+import { workoutSets, trainingPlans, planExercises, exercises } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getWeekStart } from "@/lib/date";
 
@@ -29,6 +29,8 @@ export default function DashboardScreen() {
     recentSessions: [],
   });
   const [loaded, setLoaded] = useState(false);
+  const [showPlanPicker, setShowPlanPicker] = useState(false);
+  const [plans, setPlans] = useState<any[]>([]);
 
   useEffect(() => {
     loadStats();
@@ -95,6 +97,40 @@ export default function DashboardScreen() {
     setLoaded(true);
   }
 
+  async function loadPlansForPicker() {
+    try {
+      const allPlans = await db.query.trainingPlans.findMany();
+      const userPlans = allPlans.filter((p: any) => !p.isTemplate);
+      const withExercises = await Promise.all(
+        userPlans.map(async (plan: any) => {
+          const peList = await db.query.planExercises.findMany({
+            where: eq(planExercises.planId, plan.id),
+          });
+          const exIds = [...new Set(peList.map((pe: any) => pe.exerciseId))];
+          const exMap: Record<string, string> = {};
+          for (const eid of exIds) {
+            const ex = await db.query.exercises.findFirst({
+              where: eq(exercises.id, eid),
+            });
+            if (ex) exMap[eid] = (ex as any).name;
+          }
+          const days: Record<number, any[]> = {};
+          for (const pe of peList) {
+            if (!days[pe.dayOfWeek]) days[pe.dayOfWeek] = [];
+            days[pe.dayOfWeek].push({
+              ...pe,
+              exerciseName: exMap[pe.exerciseId] || "未知",
+            });
+          }
+          return { ...plan, days };
+        }),
+      );
+      setPlans(withExercises);
+    } catch {
+      setPlans([]);
+    }
+  }
+
   function formatDate(d: Date) {
     const now = new Date();
     const diff = Math.floor((now.getTime() - d.getTime()) / 86400000);
@@ -111,7 +147,8 @@ export default function DashboardScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-canvas">
+    <View className="flex-1 bg-canvas">
+      <ScrollView className="flex-1">
       {/* ─── 顶部品牌区 ─── */}
       <View className="pt-16 px-xl pb-sm flex-row justify-between items-center">
         <View>
@@ -149,14 +186,13 @@ export default function DashboardScreen() {
                 {stats.todayPlan ? "按计划执行" : "选择动作开始训练"}
               </Text>
             </View>
-            <Link href="/(tabs)/workout" asChild>
-              <TouchableOpacity
-                className="w-11 h-11 rounded-full bg-accent items-center justify-center active:scale-95"
-                activeOpacity={0.8}
-              >
-                <Dumbbell color="#000000" size={18} />
-              </TouchableOpacity>
-            </Link>
+            <TouchableOpacity
+              onPress={() => { loadPlansForPicker(); setShowPlanPicker(true); }}
+              className="w-11 h-11 rounded-full bg-accent items-center justify-center active:scale-95"
+              activeOpacity={0.8}
+            >
+              <Dumbbell color="#000000" size={18} />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -241,5 +277,70 @@ export default function DashboardScreen() {
         )}
       </View>
     </ScrollView>
+
+      {showPlanPicker && (
+        <View
+          className="absolute bottom-0 left-0 right-0 bg-canvas-alt rounded-t-2xl px-xl pt-md pb-xxl z-10"
+          style={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+        >
+          <View className="w-8 h-1 bg-hairline rounded-pill self-center mb-lg" />
+          <Text className="text-ink text-body-strong mb-md">选择训练计划</Text>
+
+          {plans.length === 0 ? (
+            <View className="py-xxl items-center">
+              <Text className="text-ink-muted text-caption">还没有训练计划</Text>
+              <TouchableOpacity
+                onPress={() => { setShowPlanPicker(false); router.push("/plan/new"); }}
+                className="mt-md"
+              >
+                <Text className="text-accent text-caption">创建计划 →</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            plans.map((plan: any) => (
+              <View key={plan.id} className="mb-md">
+                <Text className="text-ink text-caption-strong mb-sm">{plan.name}</Text>
+                {Object.entries(plan.days).map(([day, dayExercises]: [string, any]) => {
+                  const dayNames = ["", "周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+                  const dayNum = parseInt(day);
+                  return (
+                    <TouchableOpacity
+                      key={day}
+                      onPress={() => {
+                        setShowPlanPicker(false);
+                        router.push({
+                          pathname: "/(tabs)/workout",
+                          params: { planId: plan.id, dayOfWeek: String(dayNum) },
+                        });
+                      }}
+                      className="bg-surface rounded-lg px-lg py-md mb-xs active:scale-[0.98]"
+                    >
+                      <Text className="text-ink text-body">{dayNames[dayNum]}</Text>
+                      <Text className="text-ink-dim text-fine-print mt-xxs">
+                        {(dayExercises as any[]).map((e: any) => e.exerciseName).join(" · ")}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            ))
+          )}
+
+          <TouchableOpacity
+            onPress={() => {
+              setShowPlanPicker(false);
+              router.push("/(tabs)/workout");
+            }}
+            className="mt-md py-md"
+          >
+            <Text className="text-ink-dim text-caption text-center">自由训练（不选计划）</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setShowPlanPicker(false)} className="mt-xs py-xs">
+            <Text className="text-ink-muted text-caption text-center">取消</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
   );
 }

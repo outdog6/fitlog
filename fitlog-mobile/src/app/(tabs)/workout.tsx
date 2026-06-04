@@ -9,12 +9,13 @@ import {
   TextInput,
 } from "react-native";
 import { Dumbbell, Plus, Trash2 } from "lucide-react-native";
+import { useLocalSearchParams } from "expo-router";
 import SetRow from "@/components/workout/SetRow";
 import RestTimerOverlay from "@/components/workout/RestTimerOverlay";
 import { getOrCreateLocalUser } from "@/lib/auth";
-import { db } from "@/db";
-import { workoutSessions, workoutSets } from "@/db/schema";
-import { router } from "expo-router";
+import { db, expoDb, planExercises, exercises } from "@/db";
+import { eq } from "drizzle-orm";
+import { randomUUID } from "expo-crypto";
 
 type SetData = {
   weight: number;
@@ -42,6 +43,8 @@ export default function WorkoutScreen() {
     { id: string; name: string; primaryMuscle: string }[]
   >([]);
 
+  const { planId, dayOfWeek } = useLocalSearchParams<{ planId?: string; dayOfWeek?: string }>();
+
   useEffect(() => {
     db.query.exercises.findMany().then((list) =>
       setAllExercises(list.map((e: any) => ({ id: e.id, name: e.name, primaryMuscle: e.primaryMuscle }))),
@@ -53,6 +56,46 @@ export default function WorkoutScreen() {
     const iv = setInterval(() => setElapsed((e) => e + 1), 1000);
     return () => clearInterval(iv);
   }, [isStarted]);
+
+  useEffect(() => {
+    if (planId && dayOfWeek) {
+      loadPlanExercises(planId, parseInt(dayOfWeek));
+    }
+  }, [planId, dayOfWeek]);
+
+  const loadPlanExercises = async (pid: string, day: number) => {
+    try {
+      const peList = await db.query.planExercises.findMany({
+        where: eq(planExercises.planId, pid),
+      });
+      const dayExercises = peList.filter((pe: any) => pe.dayOfWeek === day);
+      dayExercises.sort((a: any, b: any) => a.order - b.order);
+
+      const newSlots: ExerciseSlot[] = [];
+      for (const pe of dayExercises) {
+        const ex = await db.query.exercises.findFirst({
+          where: eq(exercises.id, pe.exerciseId),
+        });
+        if (ex) {
+          const sets: SetData[] = [];
+          for (let i = 0; i < (pe.targetSets || 3); i++) {
+            sets.push({ weight: 20, reps: 10, status: "pending" });
+          }
+          newSlots.push({
+            exerciseId: (ex as any).id,
+            exerciseName: (ex as any).name,
+            sets,
+          });
+        }
+      }
+      if (newSlots.length > 0) {
+        setSlots(newSlots);
+        setIsStarted(true);
+      }
+    } catch {
+      // plan exercises not found — stay in empty state
+    }
+  };
 
   const filteredPickerExercises = allExercises.filter((ex) => {
     if (pickerFilter && ex.primaryMuscle !== pickerFilter) return false;
@@ -164,40 +207,34 @@ export default function WorkoutScreen() {
     }
     try {
       const user = await getOrCreateLocalUser();
-      const [session] = await db
-        .insert(workoutSessions)
-        .values({ userId: user.id, date: new Date(), duration: elapsed })
-        .returning();
+      const sessionId = randomUUID();
 
-      const allSets = slots.flatMap((slot) =>
-        slot.sets
-          .filter((s) => s.status === "done")
-          .map((s, idx) => ({
-            sessionId: session.id,
-            exerciseId: slot.exerciseId,
-            setNumber: idx + 1,
-            weight: s.weight,
-            reps: s.reps,
-          })),
+      expoDb.execSync(`CREATE TABLE IF NOT EXISTS WorkoutSession (id TEXT PRIMARY KEY, userId TEXT NOT NULL, planId TEXT, date INTEGER NOT NULL, duration INTEGER, notes TEXT)`);
+      expoDb.execSync(`CREATE TABLE IF NOT EXISTS WorkoutSet (id TEXT PRIMARY KEY, sessionId TEXT NOT NULL, exerciseId TEXT NOT NULL, setNumber INTEGER NOT NULL, weight REAL NOT NULL, reps INTEGER NOT NULL, rpe REAL)`);
+
+      expoDb.runSync(
+        `INSERT INTO WorkoutSession (id, userId, date, duration) VALUES (?, ?, ?, ?)`,
+        [sessionId, user.id, Date.now(), elapsed]
       );
 
-      await db.insert(workoutSets).values(allSets);
+      for (const slot of slots) {
+        const doneSets = slot.sets.filter((s) => s.status === "done");
+        for (let idx = 0; idx < doneSets.length; idx++) {
+          const s = doneSets[idx];
+          expoDb.runSync(
+            `INSERT INTO WorkoutSet (id, sessionId, exerciseId, setNumber, weight, reps) VALUES (?, ?, ?, ?, ?, ?)`,
+            [randomUUID(), sessionId, slot.exerciseId, idx + 1, s.weight, s.reps]
+          );
+        }
+      }
+
       Alert.alert("完成", `记录了 ${totalSets} 组训练`, [
-        {
-          text: "查看详情",
-          onPress: () => {
-            setSlots([]);
-            setIsStarted(false);
-            setElapsed(0);
-            router.push({ pathname: "/workout/[id]", params: { id: session.id } });
-          },
-        },
         { text: "好的", onPress: () => setSlots([]) },
       ]);
       setIsStarted(false);
       setElapsed(0);
-    } catch (err) {
-      Alert.alert("错误", "保存失败");
+    } catch (err: any) {
+      Alert.alert("错误", err?.message ?? "保存失败");
     }
   }, [slots, elapsed]);
 
