@@ -5,9 +5,9 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  Alert,
   ActivityIndicator,
 } from "react-native";
+import AlertModal from "@/components/ui/AlertModal";
 import { useLocalSearchParams, router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import { expoDb, db } from "@/db";
@@ -29,12 +29,12 @@ export default function EditExerciseScreen() {
   const [instructions, setInstructions] = useState("");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [alert, setAlert] = useState<any>(null);
 
   useEffect(() => {
     if (!id) {
-      Alert.alert("错误", "无效的动作 ID", [
-        { text: "返回", onPress: () => router.back() },
-      ]);
+      setAlert({ title: "错误", message: "无效的动作 ID", buttons: [{ text: "返回", onPress: () => router.back(), style: "primary" }] });
+      setLoading(false);
       return;
     }
 
@@ -49,13 +49,11 @@ export default function EditExerciseScreen() {
           setDescription(ex.description ?? "");
           setInstructions(ex.instructions ?? "");
         } else {
-          Alert.alert("错误", "动作未找到", [
-            { text: "返回", onPress: () => router.back() },
-          ]);
+          setAlert({ title: "错误", message: "动作未找到", buttons: [{ text: "返回", onPress: () => router.back(), style: "primary" }] });
         }
       })
       .catch(() => {
-        Alert.alert("错误", "加载失败");
+        setAlert({ title: "错误", message: "加载失败" });
       })
       .finally(() => {
         setLoading(false);
@@ -64,15 +62,15 @@ export default function EditExerciseScreen() {
 
   async function handleSave() {
     if (!name.trim()) {
-      Alert.alert("提示", "请输入动作名称");
+      setAlert({ title: "请输入动作名称" });
       return;
     }
     if (!primaryMuscle) {
-      Alert.alert("提示", "请选择主肌群");
+      setAlert({ title: "请选择主肌群" });
       return;
     }
     if (!equipment) {
-      Alert.alert("提示", "请选择器材");
+      setAlert({ title: "请选择器材" });
       return;
     }
 
@@ -83,11 +81,9 @@ export default function EditExerciseScreen() {
         `UPDATE Exercise SET name=?, primaryMuscle=?, equipment=?, description=?, instructions=? WHERE id=?`,
         [name.trim(), primaryMuscle, equipment, description.trim(), instructions.trim(), id]
       );
-      Alert.alert("保存成功", "", [
-        { text: "确定", onPress: () => router.back() },
-      ]);
+      setAlert({ title: "保存成功", buttons: [{ text: "确定", onPress: () => router.back(), style: "primary" }] });
     } catch (e: any) {
-      Alert.alert("保存失败", e?.message ?? "请稍后重试");
+      setAlert({ title: "保存失败", message: e?.message ?? "请稍后重试" });
     } finally {
       setSaving(false);
     }
@@ -219,6 +215,13 @@ export default function EditExerciseScreen() {
           </Text>
         </TouchableOpacity>
       </ScrollView>
+      <AlertModal
+        visible={alert !== null}
+        title={alert?.title ?? ""}
+        message={alert?.message}
+        buttons={alert?.buttons}
+        onDismiss={() => setAlert(null)}
+      />
     </View>
   );
 }

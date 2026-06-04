@@ -1,13 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   FlatList,
-  Alert,
   TextInput,
+  AppState,
 } from "react-native";
+import AlertModal from "@/components/ui/AlertModal";
 import { Dumbbell, Plus, Trash2 } from "lucide-react-native";
 import { useLocalSearchParams } from "expo-router";
 import SetRow from "@/components/workout/SetRow";
@@ -36,12 +37,15 @@ export default function WorkoutScreen() {
   const [nextExerciseName, setNextExerciseName] = useState("");
   const [elapsed, setElapsed] = useState(0);
   const [isStarted, setIsStarted] = useState(false);
+  const workoutStartRef = useRef(0);
   const [showExercisePicker, setShowExercisePicker] = useState(false);
   const [pickerSearch, setPickerSearch] = useState("");
   const [pickerFilter, setPickerFilter] = useState<string | null>(null);
   const [allExercises, setAllExercises] = useState<
     { id: string; name: string; primaryMuscle: string }[]
   >([]);
+
+  const [alert, setAlert] = useState<any>(null);
 
   const { planId, dayOfWeek } = useLocalSearchParams<{ planId?: string; dayOfWeek?: string }>();
 
@@ -53,7 +57,10 @@ export default function WorkoutScreen() {
 
   useEffect(() => {
     if (!isStarted) return;
-    const iv = setInterval(() => setElapsed((e) => e + 1), 1000);
+    if (!workoutStartRef.current) workoutStartRef.current = Date.now();
+    const iv = setInterval(() => {
+      setElapsed(Math.floor((Date.now() - workoutStartRef.current) / 1000));
+    }, 1000);
     return () => clearInterval(iv);
   }, [isStarted]);
 
@@ -202,11 +209,11 @@ export default function WorkoutScreen() {
       0,
     );
     if (totalSets === 0) {
-      Alert.alert("提示", "请至少完成一组训练");
+      setAlert({ title: "请至少完成一组训练" });
       return;
     }
     try {
-      const user = await getOrCreateLocalUser();
+      const user: any = await getOrCreateLocalUser();
       const sessionId = randomUUID();
 
       expoDb.execSync(`CREATE TABLE IF NOT EXISTS WorkoutSession (id TEXT PRIMARY KEY, userId TEXT NOT NULL, planId TEXT, date INTEGER NOT NULL, duration INTEGER, notes TEXT)`);
@@ -228,13 +235,11 @@ export default function WorkoutScreen() {
         }
       }
 
-      Alert.alert("完成", `记录了 ${totalSets} 组训练`, [
-        { text: "好的", onPress: () => setSlots([]) },
-      ]);
-      setIsStarted(false);
+      setAlert({ title: "训练完成", message: `记录了 ${totalSets} 组训练`, buttons: [{ text: "确定", onPress: () => setSlots([]), style: "primary" }] });
+      setIsStarted(false); workoutStartRef.current = 0;
       setElapsed(0);
     } catch (err: any) {
-      Alert.alert("错误", err?.message ?? "保存失败");
+      setAlert({ title: "错误", message: err?.message ?? "保存失败" });
     }
   }, [slots, elapsed]);
 
@@ -365,19 +370,7 @@ export default function WorkoutScreen() {
             </View>
             <TouchableOpacity
               onPress={() => {
-                Alert.alert("结束训练", "确定要结束当前训练吗？", [
-                  { text: "取消", style: "cancel" },
-                  {
-                    text: "结束",
-                    onPress: () => {
-                      setSlots([]);
-                      setIsStarted(false);
-                      setElapsed(0);
-                      setActiveExerciseIdx(0);
-                      setShowExercisePicker(false);
-                    },
-                  },
-                ]);
+                setAlert({ title: "结束训练", message: "确定要结束当前训练吗？", buttons: [{ text: "取消", style: "cancel" }, { text: "结束", style: "destructive", onPress: () => { setSlots([]); setIsStarted(false); workoutStartRef.current = 0; setElapsed(0); setActiveExerciseIdx(0); setShowExercisePicker(false); } }] });
               }}
               className="w-9 h-9 rounded-full bg-surface items-center justify-center"
             >
@@ -540,6 +533,13 @@ export default function WorkoutScreen() {
         nextExercise={nextExerciseName}
         onComplete={() => setResting(false)}
         onSkip={() => setResting(false)}
+      />
+      <AlertModal
+        visible={alert !== null}
+        title={alert?.title ?? ""}
+        message={alert?.message}
+        buttons={alert?.buttons}
+        onDismiss={() => setAlert(null)}
       />
     </View>
   );

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from "react-native";
+import { View, Text, ScrollView, TextInput, TouchableOpacity } from "react-native";
+import AlertModal from "@/components/ui/AlertModal";
 import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import { expoDb } from "@/db";
@@ -16,18 +17,19 @@ export default function CreateExerciseScreen() {
   const [description, setDescription] = useState("");
   const [instructions, setInstructions] = useState("");
   const [saving, setSaving] = useState(false);
+  const [alert, setAlert] = useState<any>(null);
 
   async function handleSave() {
     if (!name.trim()) {
-      Alert.alert("提示", "请输入动作名称");
+      setAlert({ title: "请输入动作名称" });
       return;
     }
     if (!primaryMuscle) {
-      Alert.alert("提示", "请选择主肌群");
+      setAlert({ title: "请选择主肌群" });
       return;
     }
     if (!equipment) {
-      Alert.alert("提示", "请选择器材");
+      setAlert({ title: "请选择器材" });
       return;
     }
 
@@ -40,11 +42,9 @@ export default function CreateExerciseScreen() {
         `INSERT INTO Exercise (id, name, primaryMuscle, secondaryMuscles, equipment, description, instructions, isPreset) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, name.trim(), primaryMuscle, "[]", equipment, description.trim(), instructions.trim(), 0]
       );
-      Alert.alert("创建成功", "", [
-        { text: "确定", onPress: () => router.back() },
-      ]);
+      setAlert({ title: "创建成功", buttons: [{ text: "确定", onPress: () => router.back(), style: "primary" }] });
     } catch (e: any) {
-      Alert.alert("创建失败", e?.message ?? "请稍后重试");
+      setAlert({ title: "创建失败", message: e?.message ?? "请稍后重试" });
     } finally {
       setSaving(false);
     }
@@ -167,6 +167,13 @@ export default function CreateExerciseScreen() {
           </Text>
         </TouchableOpacity>
       </ScrollView>
+      <AlertModal
+        visible={alert !== null}
+        title={alert?.title ?? ""}
+        message={alert?.message}
+        buttons={alert?.buttons}
+        onDismiss={() => setAlert(null)}
+      />
     </View>
   );
 }
